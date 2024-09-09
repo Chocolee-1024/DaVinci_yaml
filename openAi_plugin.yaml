@@ -4,7 +4,7 @@ info:
   description: 這個 API 讓你可以查詢氣象資料開放平台提供的即時天氣資訊。
   version: 1.0.0
 servers:
-  - url: https://opendata.cwa.gov.tw/api/v1/rest/datastore
+  - url: https://opendata.cwb.gov.tw/api/v1/rest/datastore
 paths:
   /F-C0032-001:
     get:
