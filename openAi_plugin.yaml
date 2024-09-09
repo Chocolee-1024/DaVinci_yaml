@@ -15,7 +15,7 @@ paths:
           required: true
           schema:
             type: string
-          description: 你的 API Key
+          description: CWB-29505DAD-7965-40EE-83B4-962CC736EDAD
         - name: locationName
           in: query
           required: true
