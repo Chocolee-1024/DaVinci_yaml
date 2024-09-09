@@ -1,60 +1,42 @@
 openapi: 3.0.0
 info:
-  title: 氣象局氣象資料 API
-  description: 這個 API 讓你可以查詢氣象資料開放平台提供的即時天氣資訊。
+  title: Nominatim Address API
+  description: 使用經緯度來反查地址
   version: 1.0.0
 servers:
-  - url: https://opendata.cwa.gov.tw/api/v1/rest/datastore
+  - url: https://nominatim.openstreetmap.org
 paths:
-  /F-C0032-001:
+  /reverse:
     get:
-      summary: 一般天氣預報 - 今日36小時天氣預報
+      summary: 獲取地址信息
       parameters:
-        - name: Authorization
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+          description: 緯度 (Latitude)
+        - name: lon
+          in: query
+          required: true
+          schema:
+            type: number
+          description: 經度 (Longitude)
+        - name: format
           in: query
           required: true
           schema:
             type: string
-          description: 你的 API Key，例如 CWB-29505DAD-7965-40EE-83B4-962CC736EDAD
-        - name: locationName
-          in: query
-          required: true
-          schema:
-            type: string
-            enum:
-              - %E5%8F%B0%E5%8C%97%E5%B8%82  # 台北市
-              - %E8%87%BA%E4%B8%AD%E5%B8%82  # 台中市
-              - %E9%AB%98%E9%9B%84%E5%B8%82  # 高雄市
-              - %E6%96%B0%E7%AB%B9%E5%B8%82  # 新竹市
-            description: 選擇你要查詢的地區名稱，使用 URL 編碼過的值
+            default: jsonv2
+          description: 回應格式
       responses:
         '200':
-          description: 成功回應
+          description: 成功獲取地址
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  success:
+                  display_name:
                     type: string
-                  result:
-                    type: object
-                    properties:
-                      resource_id:
-                        type: string
-                      fields:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            type:
-                              type: string
-                  records:
-                    type: object
-                    properties:
-                      datasetDescription:
-                        type: string
-                      location:
-                        type: array
+                    description: 反查得到的地址名稱
