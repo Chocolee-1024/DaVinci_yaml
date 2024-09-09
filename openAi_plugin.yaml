@@ -12,11 +12,11 @@ paths:
       summary: 一般天氣預報 - 今日36小時天氣預報
       parameters:
         - name: Authorization
-          in: header  # 修改為 header
+          in: query
           required: true
           schema:
             type: string
-          description:  CWB-29505DAD-7965-40EE-83B4-962CC736EDAD
+          description:  直接填入這個 API KEY:"CWB-29505DAD-7965-40EE-83B4-962CC736EDAD"
         - name: locationName
           in: query
           required: true
