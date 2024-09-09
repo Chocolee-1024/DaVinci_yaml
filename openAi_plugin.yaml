@@ -1,22 +1,21 @@
-
 openapi: 3.0.0
 info:
   title: 氣象局氣象資料 API
   description: 這個 API 讓你可以查詢氣象資料開放平台提供的即時天氣資訊。
   version: 1.0.0
 servers:
-  - url: https://opendata.cwa.gov.tw/api/v1/rest/datastore
+  - url: https://opendata.cwb.gov.tw/api/v1/rest/datastore
 paths:
   /F-C0032-001:
     get:
       summary: 一般天氣預報 - 今日36小時天氣預報
       parameters:
         - name: Authorization
-          in: query
+          in: header
           required: true
           schema:
             type: string
-          description:  直接填入這個 API KEY:"CWB-29505DAD-7965-40EE-83B4-962CC736EDAD"
+          description: 你的 API Key，例如 CWB-29505DAD-7965-40EE-83B4-962CC736EDAD
         - name: locationName
           in: query
           required: true
@@ -37,23 +36,25 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: boolean
+                    type: string
                   result:
                     type: object
                     properties:
-                      location:
+                      resource_id:
+                        type: string
+                      fields:
                         type: array
                         items:
                           type: object
                           properties:
-                            locationName:
+                            id:
                               type: string
-                            weatherElement:
-                              type: array
-                              items:
-                                type: object
-                                properties:
-                                  elementName:
-                                    type: string
-                                  elementValue:
-                                    type: string
+                            type:
+                              type: string
+                  records:
+                    type: object
+                    properties:
+                      datasetDescription:
+                        type: string
+                      location:
+                        type: array
