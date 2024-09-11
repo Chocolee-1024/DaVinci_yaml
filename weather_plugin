@@ -1,50 +1,157 @@
 openapi: 3.0.0
 info:
-  title: Amadeus API Token
-  description: 使用 API Key 和 Secret 獲取 OAuth2 Access Token
+  title: Amadeus Flight Offers API
+  description: 查詢航班與城市機場資訊
   version: 1.0.0
 servers:
-  - url: https://test.api.amadeus.com
+  - url: https://test.api.amadeus.com/v1
     description: Amadeus 測試伺服器
 
 paths:
-  /v1/security/oauth2/token:
-    post:
-      summary: 獲取 OAuth2 Access Token
-      description: 使用 API Key 和 Secret 獲取 Access Token
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                client_id:
-                  type: string
-                  description: API Key
-                  example: VYtznfANezZ9Saswf3f9FGrT8vSP5Cgu
-                client_secret:
-                  type: string
-                  description: API Secret
-                  example: rpDfmy7lQeelyIq9
-                grant_type:
-                  type: string
-                  description: OAuth2 grant type
-                  example: client_credentials
+  /shopping/flight-offers:
+    get:
+      summary: 查詢航班
+      description: 根據出發地和目的地查詢航班資訊
+      parameters:
+        - name: originLocationCode
+          in: query
+          required: true
+          description: 出發地的 IATA 機場代碼
+          schema:
+            type: string
+        - name: destinationLocationCode
+          in: query
+          required: true
+          description: 目的地的 IATA 機場代碼
+          schema:
+            type: string
+        - name: departureDate
+          in: query
+          required: true
+          description: 出發日期，格式為 YYYY-MM-DD
+          schema:
+            type: string
+        - name: adults
+          in: query
+          required: true
+          description: 成人乘客數
+          schema:
+            type: integer
       responses:
         '200':
-          description: 成功返回 Access Token
+          description: 成功返回航班資訊
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  access_token:
-                    type: string
-                  expires_in:
-                    type: integer
-                  token_type:
-                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        price:
+                          type: object
+                          properties:
+                            currency:
+                              type: string
+                            total:
+                              type: string
+                        itineraries:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              segments:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    departure:
+                                      type: object
+                                      properties:
+                                        iataCode:
+                                          type: string
+                                        at:
+                                          type: string
+                                    arrival:
+                                      type: object
+                                      properties:
+                                        iataCode:
+                                          type: string
+                                        at:
+                                          type: string
+                                    carrierCode:
+                                      type: string
+                                    number:
+                                      type: string
         '400':
-          description: 請求錯誤
+          description: 請求參數錯誤
         '401':
-          description: 授權失敗
+          description: 未授權
+        '500':
+          description: 伺服器錯誤
+
+  /reference-data/locations:
+    get:
+      summary: 查詢城市和機場
+      description: 根據關鍵字查詢城市或機場的 IATA 代碼和相關資訊
+      parameters:
+        - name: keyword
+          in: query
+          required: true
+          description: 查詢城市或機場的名稱或代碼
+          schema:
+            type: string
+        - name: subType
+          in: query
+          required: false
+          description: 查詢的類型，可以是 AIRPORT 或 CITY
+          schema:
+            type: string
+            enum: 
+              - AIRPORT
+              - CITY
+      responses:
+        '200':
+          description: 成功返回城市和機場資訊
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        iataCode:
+                          type: string
+                        name:
+                          type: string
+                        subType:
+                          type: string
+                        geoCode:
+                          type: object
+                          properties:
+                            latitude:
+                              type: number
+                            longitude:
+                              type: number
+                        address:
+                          type: object
+                          properties:
+                            cityName:
+                              type: string
+                            countryCode:
+                              type: string
+        '400':
+          description: 請求參數錯誤
+        '401':
+          description: 未授權
+        '500':
+          description: 伺服器錯誤
