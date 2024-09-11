@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Amadeus Flight Offers Search API
-  description: "This plugin retrieves flight offers between two cities using the Amadeus API."
+  title: Amadeus OAuth 2.0 Token API
+  description: "This plugin retrieves OAuth 2.0 access tokens from Amadeus API using the client credentials grant type."
   version: 1.0.0
   contact:
     name: Amadeus API Support
@@ -12,87 +12,58 @@ servers:
   - url: https://test.api.amadeus.com
 
 paths:
-  /v2/shopping/flight-offers:
-    get:
-      summary: 查詢航班班次
+  /v1/security/oauth2/token:
+    post:
+      summary: Retrieve OAuth 2.0 Token
       description: |
-        使用 Amadeus API 查詢從出發城市到目的地城市的航班。需要提供出發地、目的地和出發日期。
-      parameters:
-        - name: originLocationCode
-          in: query
-          required: true
-          description: "出發城市機場代碼（例如：TPE）"
-          schema:
-            type: string
-        - name: destinationLocationCode
-          in: query
-          required: true
-          description: "目的地城市機場代碼（例如：NRT）"
-          schema:
-            type: string
-        - name: departureDate
-          in: query
-          required: true
-          description: "出發日期，格式為 YYYY-MM-DD"
-          schema:
-            type: string
-        - name: adults
-          in: query
-          required: true
-          description: "乘客人數"
-          schema:
-            type: integer
+        Retrieve an OAuth 2.0 token using the client credentials grant type. 
+        This token can be used to authenticate further requests to the Amadeus API.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                  description: "Your Amadeus API client ID."
+                client_secret:
+                  type: string
+                  description: "Your Amadeus API client secret."
+                grant_type:
+                  type: string
+                  enum: [client_credentials]
+                  description: "The OAuth 2.0 grant type."
+              required:
+                - client_id
+                - client_secret
+                - grant_type
+              example:
+                client_id: YOUR_CLIENT_ID
+                client_secret: YOUR_CLIENT_SECRET
+                grant_type: client_credentials
       responses:
         '200':
-          description: "成功返回航班信息"
+          description: "Successful token retrieval"
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                        id:
-                          type: string
-                        source:
-                          type: string
-                        itineraries:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              segments:
-                                type: array
-                                items:
-                                  type: object
-                                  properties:
-                                    departure:
-                                      type: object
-                                      properties:
-                                        iataCode:
-                                          type: string
-                                          description: "出發機場的IATA代碼"
-                                        at:
-                                          type: string
-                                          description: "出發時間"
-                                    arrival:
-                                      type: object
-                                      properties:
-                                        iataCode:
-                                          type: string
-                                          description: "到達機場的IATA代碼"
-                                        at:
-                                          type: string
-                                          description: "到達時間"
+                  token_type:
+                    type: string
+                    description: "The type of the token, typically 'Bearer'."
+                  access_token:
+                    type: string
+                    description: "The OAuth 2.0 access token."
+                  expires_in:
+                    type: integer
+                    description: "The token's expiry time in seconds."
         '400':
-          description: "無效的參數"
+          description: "Invalid request parameters."
         '401':
-          description: "授權失敗，可能是訪問令牌無效或已過期"
+          description: "Unauthorized, invalid client ID or secret."
 
 components:
   securitySchemes:
