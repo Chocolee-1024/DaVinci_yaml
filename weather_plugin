@@ -1,91 +1,122 @@
 openapi: 3.0.0
 info:
-  title: TDX Airport Information Plugin
-  description: 查詢特定台灣機場的詳細資訊
+  title: Weather API
+  description: 查詢即時天氣數據
   version: 1.0.0
-  contact:
-    name: Developer
-    email: your-email@example.com
+servers:
+  - url: https://api.weatherapi.com/v1
+    description: WeatherAPI 伺服器
 
-# API 授權方式
-components:
-  securitySchemes:
-    apiKeyAuth:
-      type: apiKey
-      in: header
-      name: authorization
-
-security:
-  - apiKeyAuth: []
-
-# 定義 API 路徑
 paths:
-  /airport/{AirportID}:
+  /current.json:
     get:
-      summary: 查詢特定機場的詳細資訊
-      description: 根據機場代碼查詢機場的資訊
-      operationId: getAirportByID
+      summary: 查詢某城市的即時天氣
+      description: 根據城市名稱查詢即時天氣數據
       parameters:
-        - name: AirportID
-          in: path
+        - name: key
+          in: query
           required: true
-          description: 機場的三字代碼，例如 TPE、TSA
+          description: WeatherAPI 提供的 API 金鑰
           schema:
             type: string
+        - name: q
+          in: query
+          required: true
+          description: 城市名稱或緯度、經度
+          schema:
+            type: string
+        - name: aqi
+          in: query
+          required: false
+          description: 是否查詢空氣質量指數，預設為 "no"
+          schema:
+            type: string
+            enum:
+              - no
+              - yes
       responses:
         '200':
-          description: 成功返回機場資料
+          description: 成功返回即時天氣數據
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  AirportID:
-                    type: string
-                    description: 機場的代碼
-                  AirportName:
+                  location:
                     type: object
                     properties:
-                      Zh_tw:
+                      name:
                         type: string
-                        description: 機場的中文名稱
-                      En:
+                        description: 城市名稱
+                      country:
                         type: string
-                        description: 機場的英文名稱
-                  CityName:
-                    type: object
-                    properties:
-                      Zh_tw:
-                        type: string
-                        description: 城市的中文名稱
-                      En:
-                        type: string
-                        description: 城市的英文名稱
-                  Location:
-                    type: object
-                    properties:
-                      Latitude:
+                        description: 國家名稱
+                      lat:
                         type: number
-                        format: float
-                        description: 機場的緯度
-                      Longitude:
+                        description: 緯度
+                      lon:
                         type: number
-                        format: float
-                        description: 機場的經度
-                  IATA:
-                    type: string
-                    description: IATA 代碼
-                  ICAO:
-                    type: string
-                    description: ICAO 代碼
+                        description: 經度
+                      localtime:
+                        type: string
+                        description: 當地時間
+                  current:
+                    type: object
+                    properties:
+                      temp_c:
+                        type: number
+                        description: 攝氏溫度
+                      condition:
+                        type: object
+                        properties:
+                          text:
+                            type: string
+                            description: 天氣狀況描述
+                      wind_kph:
+                        type: number
+                        description: 風速（公里/小時）
+                      humidity:
+                        type: number
+                        description: 濕度（百分比）
+                      cloud:
+                        type: number
+                        description: 雲量
+        '400':
+          description: 錯誤請求，缺少必要參數或格式錯誤
         '401':
-          description: 未授權
+          description: 未授權，API 金鑰無效
         '404':
-          description: 找不到指定的機場
+          description: 城市名稱未找到
         '500':
           description: 伺服器錯誤
 
-# 伺服器端點
-servers:
-  - url: https://tdx.transportdata.tw/api/basic/v2/Air/Airport
-    description: TDX 特定機場資訊 API 伺服器
+components:
+  schemas:
+    WeatherData:
+      type: object
+      properties:
+        location:
+          type: object
+          properties:
+            name:
+              type: string
+            region:
+              type: string
+            country:
+              type: string
+        current:
+          type: object
+          properties:
+            temp_c:
+              type: number
+            condition:
+              type: object
+              properties:
+                text:
+                  type: string
+            wind_kph:
+              type: number
+            humidity:
+              type: number
+            cloud:
+              type: number
