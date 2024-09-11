@@ -1,14 +1,13 @@
-# 插件的基本資訊
 openapi: 3.0.0
 info:
-  title: TDX Flight Query Plugin
-  description: 查詢台灣航班班次，提供即時航班資訊。
+  title: TDX Airport Information Plugin
+  description: 查詢特定台灣機場的詳細資訊
   version: 1.0.0
   contact:
     name: Developer
     email: your-email@example.com
 
-# 授權方式，這裡使用 API Key
+# API 授權方式
 components:
   securitySchemes:
     apiKeyAuth:
@@ -16,63 +15,77 @@ components:
       in: header
       name: authorization
 
-# 授權相關的安全需求
 security:
   - apiKeyAuth: []
 
-# 定義 API 路徑和方法
+# 定義 API 路徑
 paths:
-  /flights:
+  /airport/{AirportID}:
     get:
-      summary: 查詢航班班次
-      operationId: getFlights
+      summary: 查詢特定機場的詳細資訊
+      description: 根據機場代碼查詢機場的資訊
+      operationId: getAirportByID
       parameters:
-        - name: $filter
-          in: query
-          description: 查詢條件，例如特定機場或航空公司
-          required: false
+        - name: AirportID
+          in: path
+          required: true
+          description: 機場的三字代碼，例如 TPE、TSA
           schema:
             type: string
-        - name: $top
-          in: query
-          description: 返回的結果數量
-          required: false
-          schema:
-            type: integer
-        - name: $skip
-          in: query
-          description: 跳過的記錄數
-          required: false
-          schema:
-            type: integer
       responses:
         '200':
-          description: 成功返回航班資料
+          description: 成功返回機場資料
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        flightNumber:
-                          type: string
-                        departureTime:
-                          type: string
-                        arrivalTime:
-                          type: string
-                        airline:
-                          type: string
-                        status:
-                          type: string
+                  AirportID:
+                    type: string
+                    description: 機場的代碼
+                  AirportName:
+                    type: object
+                    properties:
+                      Zh_tw:
+                        type: string
+                        description: 機場的中文名稱
+                      En:
+                        type: string
+                        description: 機場的英文名稱
+                  CityName:
+                    type: object
+                    properties:
+                      Zh_tw:
+                        type: string
+                        description: 城市的中文名稱
+                      En:
+                        type: string
+                        description: 城市的英文名稱
+                  Location:
+                    type: object
+                    properties:
+                      Latitude:
+                        type: number
+                        format: float
+                        description: 機場的緯度
+                      Longitude:
+                        type: number
+                        format: float
+                        description: 機場的經度
+                  IATA:
+                    type: string
+                    description: IATA 代碼
+                  ICAO:
+                    type: string
+                    description: ICAO 代碼
         '401':
           description: 未授權
+        '404':
+          description: 找不到指定的機場
         '500':
           description: 伺服器錯誤
 
-# 伺服器端點（TDX API 的 URL）
+# 伺服器端點
 servers:
-  - url: https://tdx.transportdata.tw/api/basic/v2/Air/FIDS/Airport
+  - url: https://tdx.transportdata.tw/api/basic/v2/Air/Airport
+    description: TDX 特定機場資訊 API 伺服器
