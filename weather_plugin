@@ -64,3 +64,15 @@ paths:
           description: "Invalid request parameters."
         '401':
           description: "Unauthorized, invalid client ID or secret."
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://test.api.amadeus.com/v1/security/oauth2/token
+          scopes: {}
+
+security:
+  - oauth2: []
