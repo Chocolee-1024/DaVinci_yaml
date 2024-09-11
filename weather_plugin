@@ -1,78 +1,122 @@
-# 插件的基本資訊
 openapi: 3.0.0
 info:
-  title: TDX Flight Query Plugin
-  description: 查詢台灣航班班次，提供即時航班資訊。
+  title: Weather API
+  description: 查詢即時天氣數據
   version: 1.0.0
-  contact:
-    name: Developer
-    email: your-email@example.com
+servers:
+  - url: https://api.weatherapi.com/v1
+    description: WeatherAPI 伺服器
 
-# 授權方式，這裡使用 API Key
-components:
-  securitySchemes:
-    apiKeyAuth:
-      type: apiKey
-      in: header
-      name: authorization
-
-# 授權相關的安全需求
-security:
-  - apiKeyAuth: []
-
-# 定義 API 路徑和方法
 paths:
-  /flights:
+  /current.json:
     get:
-      summary: 查詢航班班次
-      operationId: getFlights
+      summary: 查詢某城市的即時天氣
+      description: 根據城市名稱查詢即時天氣數據
       parameters:
-        - name: $filter
+        - name: key
           in: query
-          description: 查詢條件，例如特定機場或航空公司
-          required: false
+          required: true
+          description: WeatherAPI 提供的 API 金鑰
           schema:
             type: string
-        - name: $top
+        - name: q
           in: query
-          description: 返回的結果數量
-          required: false
+          required: true
+          description: 城市名稱或緯度、經度
           schema:
-            type: integer
-        - name: $skip
+            type: string
+        - name: aqi
           in: query
-          description: 跳過的記錄數
           required: false
+          description: 是否查詢空氣質量指數，預設為 "no"
           schema:
-            type: integer
+            type: string
+            enum:
+              - no
+              - yes
       responses:
         '200':
-          description: 成功返回航班資料
+          description: 成功返回即時天氣數據
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        flightNumber:
-                          type: string
-                        departureTime:
-                          type: string
-                        arrivalTime:
-                          type: string
-                        airline:
-                          type: string
-                        status:
-                          type: string
+                  location:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: 城市名稱
+                      country:
+                        type: string
+                        description: 國家名稱
+                      lat:
+                        type: number
+                        description: 緯度
+                      lon:
+                        type: number
+                        description: 經度
+                      localtime:
+                        type: string
+                        description: 當地時間
+                  current:
+                    type: object
+                    properties:
+                      temp_c:
+                        type: number
+                        description: 攝氏溫度
+                      condition:
+                        type: object
+                        properties:
+                          text:
+                            type: string
+                            description: 天氣狀況描述
+                      wind_kph:
+                        type: number
+                        description: 風速（公里/小時）
+                      humidity:
+                        type: number
+                        description: 濕度（百分比）
+                      cloud:
+                        type: number
+                        description: 雲量
+        '400':
+          description: 錯誤請求，缺少必要參數或格式錯誤
         '401':
-          description: 未授權
+          description: 未授權，API 金鑰無效
+        '404':
+          description: 城市名稱未找到
         '500':
           description: 伺服器錯誤
 
-# 伺服器端點（TDX API 的 URL）
-servers:
-  - url: https://tdx.transportdata.tw/api/basic/v2/Air/FIDS/Airport
+components:
+  schemas:
+    WeatherData:
+      type: object
+      properties:
+        location:
+          type: object
+          properties:
+            name:
+              type: string
+            region:
+              type: string
+            country:
+              type: string
+        current:
+          type: object
+          properties:
+            temp_c:
+              type: number
+            condition:
+              type: object
+              properties:
+                text:
+                  type: string
+            wind_kph:
+              type: number
+            humidity:
+              type: number
+            cloud:
+              type: number
