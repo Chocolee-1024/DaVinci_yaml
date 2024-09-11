@@ -1,78 +1,78 @@
+# 插件的基本資訊
 openapi: 3.0.0
 info:
-  title: Amadeus OAuth 2.0 Token API
-  description: "This plugin retrieves OAuth 2.0 access tokens from Amadeus API using the client credentials grant type."
+  title: TDX Flight Query Plugin
+  description: 查詢台灣航班班次，提供即時航班資訊。
   version: 1.0.0
   contact:
-    name: Amadeus API Support
-    url: https://developers.amadeus.com
-    email: support@amadeus.com
+    name: Developer
+    email: your-email@example.com
 
-servers:
-  - url: https://test.api.amadeus.com
+# 授權方式，這裡使用 API Key
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: authorization
 
+# 授權相關的安全需求
+security:
+  - apiKeyAuth: []
+
+# 定義 API 路徑和方法
 paths:
-  /v1/security/oauth2/token:
-    post:
-      summary: Retrieve OAuth 2.0 Token
-      description: |
-        Retrieve an OAuth 2.0 token using the client credentials grant type. 
-        This token can be used to authenticate further requests to the Amadeus API.
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                client_id:
-                  type: string
-                  description: "Your Amadeus API client ID."
-                client_secret:
-                  type: string
-                  description: "Your Amadeus API client secret."
-                grant_type:
-                  type: string
-                  enum: [client_credentials]
-                  description: "The OAuth 2.0 grant type."
-              required:
-                - client_id
-                - client_secret
-                - grant_type
-              example:
-                client_id: YOUR_CLIENT_ID
-                client_secret: YOUR_CLIENT_SECRET
-                grant_type: client_credentials
+  /flights:
+    get:
+      summary: 查詢航班班次
+      operationId: getFlights
+      parameters:
+        - name: $filter
+          in: query
+          description: 查詢條件，例如特定機場或航空公司
+          required: false
+          schema:
+            type: string
+        - name: $top
+          in: query
+          description: 返回的結果數量
+          required: false
+          schema:
+            type: integer
+        - name: $skip
+          in: query
+          description: 跳過的記錄數
+          required: false
+          schema:
+            type: integer
       responses:
         '200':
-          description: "Successful token retrieval"
+          description: 成功返回航班資料
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  token_type:
-                    type: string
-                    description: "The type of the token, typically 'Bearer'."
-                  access_token:
-                    type: string
-                    description: "The OAuth 2.0 access token."
-                  expires_in:
-                    type: integer
-                    description: "The token's expiry time in seconds."
-        '400':
-          description: "Invalid request parameters."
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        flightNumber:
+                          type: string
+                        departureTime:
+                          type: string
+                        arrivalTime:
+                          type: string
+                        airline:
+                          type: string
+                        status:
+                          type: string
         '401':
-          description: "Unauthorized, invalid client ID or secret."
+          description: 未授權
+        '500':
+          description: 伺服器錯誤
 
-components:
-  securitySchemes:
-    oauth2:
-      type: oauth2
-      flows:
-        clientCredentials:
-          tokenUrl: https://test.api.amadeus.com/v1/security/oauth2/token
-          scopes: {}
-
-security:
-  - oauth2: []
+# 伺服器端點（TDX API 的 URL）
+servers:
+  - url: https://tdx.transportdata.tw/api/basic/v2/Air/FIDS/Airport
