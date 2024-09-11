@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  title: Weather API
+  description: 查詢即時天氣數據
+  version: 1.0.0
+servers:
+  - url: https://api.weatherapi.com/v1
+    description: WeatherAPI 伺服器
+
+paths:
+  /current.json:
+    get:
+      summary: 查詢某城市的即時天氣
+      description: 根據城市名稱查詢即時天氣數據
+      parameters:
+        - name: key
+          in: query
+          required: true
+          description: WeatherAPI 提供的 API 金鑰
+          schema:
+            type: string
+        - name: q
+          in: query
+          required: true
+          description: 城市名稱或緯度、經度
+          schema:
+            type: string
+        - name: aqi
+          in: query
+          required: false
+          description: 是否查詢空氣質量指數，預設為 "no"
+          schema:
+            type: string
+            enum:
+              - no
+              - yes
+      responses:
+        '200':
+          description: 成功返回即時天氣數據
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  location:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: 城市名稱
+                      country:
+                        type: string
+                        description: 國家名稱
+                      lat:
+                        type: number
+                        description: 緯度
+                      lon:
+                        type: number
+                        description: 經度
+                      localtime:
+                        type: string
+                        description: 當地時間
+                  current:
+                    type: object
+                    properties:
+                      temp_c:
+                        type: number
+                        description: 攝氏溫度
+                      condition:
+                        type: object
+                        properties:
+                          text:
+                            type: string
+                            description: 天氣狀況描述
+                      wind_kph:
+                        type: number
+                        description: 風速（公里/小時）
+                      humidity:
+                        type: number
+                        description: 濕度（百分比）
+                      cloud:
+                        type: number
+                        description: 雲量
+        '400':
+          description: 錯誤請求，缺少必要參數或格式錯誤
+        '401':
+          description: 未授權，API 金鑰無效
+        '404':
+          description: 城市名稱未找到
+        '500':
+          description: 伺服器錯誤
+
+components:
+  schemas:
+    WeatherData:
+      type: object
+      properties:
+        location:
+          type: object
+          properties:
+            name:
+              type: string
+            region:
+              type: string
+            country:
+              type: string
+        current:
+          type: object
+          properties:
+            temp_c:
+              type: number
+            condition:
+              type: object
+              properties:
+                text:
+                  type: string
+            wind_kph:
+              type: number
+            humidity:
+              type: number
+            cloud:
+              type: number
