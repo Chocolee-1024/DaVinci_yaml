@@ -139,22 +139,49 @@ paths:
           description: 找不到指定的航空公司
         '500':
           description: 伺服器錯誤
+# 定義 API 路徑
 paths:
-  DailyFlightSchedule/Domestic/{IATA}:
+  /v2/Air/GeneralSchedule/International:
     get:
-      summary: 取得國內指定航空公司每日的飛行班表資料
-      description: 根據 IATA 代碼查詢國內航班的飛行班表
-      operationId: getDailyFlightSchedule
+      summary: 取得國際航空定期時刻表
+      description: 查詢所有國際航班的定期時刻表
+      operationId: getInternationalFlightSchedule
       parameters:
-        - name: IATA
-          in: path
+        - name: DepartureAirportID
+          in: query
           required: true
-          description: 航空公司的 IATA 代碼
+          description: 出發機場的代碼 (例如 TPE)
           schema:
             type: string
+        - name: ArrivalAirportID
+          in: query
+          required: true
+          description: 到達機場的代碼 (例如 JFK)
+          schema:
+            type: string
+        - name: airlineIATA
+          in: query
+          required: false
+          description: 航空公司的 IATA 代碼 (例如 CI)
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          required: false
+          description: 查詢航班的開始日期 (ISO8601 格式，例如 2024-09-12)
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          required: false
+          description: 查詢航班的結束日期 (ISO8601 格式，例如 2024-09-12)
+          schema:
+            type: string
+            format: date
       responses:
         '200':
-          description: 成功返回飛行班表資料
+          description: 成功返回國際航班定期時刻表
           content:
             application/json:
               schema:
@@ -191,6 +218,9 @@ paths:
                         arrivalAirport:
                           type: string
                           description: 到達機場的代碼
+                        airlineIATA:
+                          type: string
+                          description: 航空公司的 IATA 代碼
         '401':
           description: 未授權
         '404':
