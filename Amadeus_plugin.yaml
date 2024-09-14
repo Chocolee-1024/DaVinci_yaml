@@ -20,7 +20,7 @@ security:
 
 # 定義 API 路徑
 paths:
-  /airport/{AirportID}:
+  Airport/airport/{AirportID}:
     get:
       summary: 查詢特定機場的詳細資訊
       description: 根據機場代碼查詢機場的資訊
@@ -84,8 +84,78 @@ paths:
           description: 找不到指定的機場
         '500':
           description: 伺服器錯誤
-
+# 定義 API 路徑
+paths:
+  FIDS/Airport/flights:
+    get:
+      summary: 查詢兩個機場之間的航班
+      description: 輸入出發機場和到達機場，查詢兩機場之間的所有航班
+      operationId: getFlightsBetweenAirports
+      parameters:
+        - name: DepartureAirportID
+          in: query
+          required: true
+          description: 出發機場的代碼 (例如 TPE)
+          schema:
+            type: string
+        - name: ArrivalAirportID
+          in: query
+          required: true
+          description: 到達機場的代碼 (例如 HND)
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          required: false
+          description: 查詢航班的開始時間（ISO8601格式，例如 2024-09-12T00:00:00）
+          schema:
+            type: string
+            format: date-time
+        - name: endTime
+          in: query
+          required: false
+          description: 查詢航班的結束時間（ISO8601格式，例如 2024-09-12T23:59:59）
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: 成功返回航班資料
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  flights:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        flightNumber:
+                          type: string
+                          description: 航班號碼
+                        airline:
+                          type: string
+                          description: 航空公司名稱
+                        departureTime:
+                          type: string
+                          description: 出發時間 (ISO8601 格式)
+                        arrivalTime:
+                          type: string
+                          description: 到達時間 (ISO8601 格式)
+                        departureAirportID:
+                          type: string
+                          description: 出發機場的代碼
+                        arrivalAirportID:
+                          type: string
+                          description: 到達機場的代碼
+        '401':
+          description: 未授權
+        '404':
+          description: 找不到符合條件的航班
+        '500':
+          description: 伺服器錯誤
 # 伺服器端點
-servers:
-  - url: https://tdx.transportdata.tw/api/basic/v2/Air/Airport
+servers: 
+  - url: https://tdx.transportdata.tw/api/basic/v2/Air/
     description: TDX 特定機場資訊 API 伺服器
