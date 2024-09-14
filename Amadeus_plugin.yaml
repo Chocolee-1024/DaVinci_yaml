@@ -20,7 +20,7 @@ security:
 
 # 定義 API 路徑
 paths:
-  Airport/airport/{AirportID}:
+  Airport/{AirportID}:
     get:
       summary: 查詢特定機場的詳細資訊
       description: 根據機場代碼查詢機場的資訊
