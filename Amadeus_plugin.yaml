@@ -86,73 +86,57 @@ paths:
           description: 伺服器錯誤
 # 定義 API 路徑
 paths:
-  FIDS/Airport/flights:
+  Airline/{AirlineID}:
     get:
-      summary: 查詢兩個機場之間的航班
-      description: 輸入出發機場和到達機場，查詢兩機場之間的所有航班
-      operationId: getFlightsBetweenAirports
+      summary: 查詢特定航空公司的詳細資訊
+      description: 根據航空公司代碼查詢航空公司的資訊
+      operationId: getAirlineByID
       parameters:
-        - name: DepartureAirportID
-          in: query
+        - name: AirlineID
+          in: path
           required: true
-          description: 出發機場的代碼 (例如 TPE)
+          description: 航空公司的代碼，例如 CI (中華航空)、BR (長榮航空)
           schema:
             type: string
-        - name: ArrivalAirportID
-          in: query
-          required: true
-          description: 到達機場的代碼 (例如 HND)
-          schema:
-            type: string
-        - name: startTime
-          in: query
-          required: false
-          description: 查詢航班的開始時間（ISO8601格式，例如 2024-09-12T00:00:00）
-          schema:
-            type: string
-            format: date-time
-        - name: endTime
-          in: query
-          required: false
-          description: 查詢航班的結束時間（ISO8601格式，例如 2024-09-12T23:59:59）
-          schema:
-            type: string
-            format: date-time
       responses:
         '200':
-          description: 成功返回航班資料
+          description: 成功返回航空公司資料
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  flights:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        flightNumber:
-                          type: string
-                          description: 航班號碼
-                        airline:
-                          type: string
-                          description: 航空公司名稱
-                        departureTime:
-                          type: string
-                          description: 出發時間 (ISO8601 格式)
-                        arrivalTime:
-                          type: string
-                          description: 到達時間 (ISO8601 格式)
-                        departureAirportID:
-                          type: string
-                          description: 出發機場的代碼
-                        arrivalAirportID:
-                          type: string
-                          description: 到達機場的代碼
+                  AirlineID:
+                    type: string
+                    description: 航空公司的代碼
+                  AirlineName:
+                    type: object
+                    properties:
+                      Zh_tw:
+                        type: string
+                        description: 航空公司的中文名稱
+                      En:
+                        type: string
+                        description: 航空公司的英文名稱
+                  Country:
+                    type: object
+                    properties:
+                      Zh_tw:
+                        type: string
+                        description: 所屬國家的中文名稱
+                      En:
+                        type: string
+                        description: 所屬國家的英文名稱
+                  IATA:
+                    type: string
+                    description: IATA 代碼
+                  ICAO:
+                    type: string
+                    description: ICAO 代碼
         '401':
           description: 未授權
         '404':
-          description: 找不到符合條件的航班
+          description: 找不到指定的航空公司
         '500':
           description: 伺服器錯誤
 # 伺服器端點
