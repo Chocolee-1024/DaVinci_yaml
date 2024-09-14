@@ -139,6 +139,64 @@ paths:
           description: 找不到指定的航空公司
         '500':
           description: 伺服器錯誤
+paths:
+  DailyFlightSchedule/Domestic/{IATA}:
+    get:
+      summary: 取得國內指定航空公司每日的飛行班表資料
+      description: 根據 IATA 代碼查詢國內航班的飛行班表
+      operationId: getDailyFlightSchedule
+      parameters:
+        - name: IATA
+          in: path
+          required: true
+          description: 航空公司的 IATA 代碼
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功返回飛行班表資料
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  airline:
+                    type: object
+                    properties:
+                      IATA:
+                        type: string
+                        description: 航空公司的 IATA 代碼
+                      name:
+                        type: string
+                        description: 航空公司名稱
+                  flights:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        flightNumber:
+                          type: string
+                          description: 航班號碼
+                        departureTime:
+                          type: string
+                          format: date-time
+                          description: 出發時間 (ISO8601 格式)
+                        arrivalTime:
+                          type: string
+                          format: date-time
+                          description: 到達時間 (ISO8601 格式)
+                        departureAirport:
+                          type: string
+                          description: 出發機場的代碼
+                        arrivalAirport:
+                          type: string
+                          description: 到達機場的代碼
+        '401':
+          description: 未授權
+        '404':
+          description: 找不到符合條件的航班資料
+        '500':
+          description: 伺服器錯誤
 # 伺服器端點
 servers: 
   - url: https://tdx.transportdata.tw/api/basic/v2/Air/
