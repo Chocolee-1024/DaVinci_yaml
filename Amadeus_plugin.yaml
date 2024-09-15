@@ -179,7 +179,7 @@ paths:
           schema:
             type: string
             format: date
-        - name: limit
+        - name: top
           in: query
           required: false
           description: 限制返回的航班數量
