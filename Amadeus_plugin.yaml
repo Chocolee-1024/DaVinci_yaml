@@ -165,7 +165,7 @@ paths:
           description: 航空公司的 IATA 代碼 (例如 CI)
           schema:
             type: string
-        - name: startDate
+        - name: ScheduleStartDate
           in: query
           required: false
           description: 查詢航班的開始日期 (ISO8601 格式，例如 2024-09-12)
