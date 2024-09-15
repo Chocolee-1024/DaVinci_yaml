@@ -215,10 +215,6 @@ paths:
                           type: string
                           format: date-time
                           description: 出發時間 (ISO8601 格式)
-                        arrivalTime:
-                          type: string
-                          format: date-time
-                          description: 到達時間 (ISO8601 格式)
                         departureAirport:
                           type: string
                           description: 出發機場的代碼
