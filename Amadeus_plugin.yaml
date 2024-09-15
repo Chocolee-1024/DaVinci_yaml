@@ -141,10 +141,10 @@ paths:
           description: 伺服器錯誤
 # 定義 API 路徑
 paths:
-  /v2/Air/GeneralSchedule/International:
+  GeneralSchedule/International:
     get:
       summary: 取得國際航空定期時刻表
-      description: 查詢所有國際航班的定期時刻表
+      description: 查詢所有國際航班的定期時刻表，並可過濾返回的航班資料。
       operationId: getInternationalFlightSchedule
       parameters:
         - name: DepartureAirportID
@@ -179,6 +179,13 @@ paths:
           schema:
             type: string
             format: date
+        - name: limit
+          in: query
+          required: false
+          description: 限制返回的航班數量
+          schema:
+            type: integer
+            example: 10
       responses:
         '200':
           description: 成功返回國際航班定期時刻表
