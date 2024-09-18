@@ -12,7 +12,7 @@ paths:
       summary: Retrieve airport information
       operationId: getAirportInfo
       requestBody:
-        description: Airport ID request
+        description: Airport ID Request
         required: true
         content:
           application/json:
@@ -20,13 +20,13 @@ paths:
               $ref: '#/components/schemas/AirportRequest'
       responses:
         '200':
-          description: Successful response with airport information
+          description: Successful Response with airport information
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AirportResponse'
         '400':
-          description: Invalid request
+          description: Invalid Request
         '404':
           description: Airport not found
 
@@ -35,7 +35,7 @@ components:
     AirportRequest:
       type: object
       properties:
-        airportID:
+        AirportID:
           type: string
           description: The ID of the airport to retrieve.
           example: TPE
@@ -43,82 +43,83 @@ components:
     AirportResponse:
       type: object
       properties:
-        airportID:
+        AirportID:
           type: string
           description: Airport ID
           example: TPE
-        airportName:
+        AirportName:
           type: object
           properties:
-            zhTw:
+            Zh_tw:
               type: string
               description: Chinese name of the airport.
               example: 桃園國際機場
-            en:
+            En:
               type: string
               description: English name of the airport.
               example: Taoyuan International Airport
-        iata:
+        IATA:
           type: string
           description: IATA code of the airport.
           example: TPE
-        icao:
+        ICAO:
           type: string
           description: ICAO code of the airport.
           example: RCTP
-        airportPosition:
+        AirportPosition:
           type: object
           properties:
-            positionLon:
+            PositionLon:
               type: number
               format: float
               description: Longitude of the airport.
               example: 121.231976
-            positionLat:
+            PositionLat:
               type: number
               format: float
               description: Latitude of the airport.
               example: 25.0770119995
-            geoHash:
+            GeoHash:
               type: string
               description: GeoHash of the airport position.
               example: wsqnwtnkj
-        cityName:
+        CityName:
           type: object
           properties:
-            zhTw:
+            Zh_tw:
               type: string
               description: Chinese name of the city.
               example: 桃園市
-            en:
+            En:
               type: string
               description: English name of the city.
               example: Taoyuan
-        airportAddress:
+        AirportAddress:
           type: string
           description: Address of the airport.
           example: 桃園市大園區航站南路9號
-        airportPhone:
+        AirportPhone:
           type: string
           description: Phone number of the airport.
           example: 03-2735081
-        airportNationality:
+        AirportNationality:
           type: string
           description: Nationality of the airport.
           example: TW
-        authorityID:
+        AuthorityID:
           type: string
           description: The authority ID of the airport.
           example: CAA
-        updateTime:
+        UpdateTime:
           type: string
           format: date-time
           description: The time the airport information was last updated.
           example: 2024-09-17T08:43:40+08:00
-        versionID:
+        VersionID:
           type: integer
           description: Version ID of the airport information.
           example: 1484
+
 # # 定義 API 路徑
 # paths:
 #   Airline/{AirlineID}:
