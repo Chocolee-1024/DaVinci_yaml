@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: TDX Airport Information Plugin
+  title: TDX Airport Information API
   description: 查詢特定機場的詳細資訊
   version: 1.0.0
   servers:
@@ -12,7 +12,7 @@ paths:
       summary: Retrieve airport information
       operationId: getAirportInfo
       requestBody:
-        description: Airport ID Request
+        description: Airport ID request
         required: true
         content:
           application/json:
@@ -20,13 +20,13 @@ paths:
               $ref: '#/components/schemas/AirportRequest'
       responses:
         '200':
-          description: Successful Response with airport information
+          description: Successful response with airport information
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AirportResponse'
         '400':
-          description: Invalid Request
+          description: Invalid request
         '404':
           description: Airport not found
 
@@ -57,12 +57,12 @@ components:
             En:
               type: string
               description: English name of the airport.
-              example: Taoyuan International Airport
-        IATA:
+              example: Taoyuan
+        AirportIATA:
           type: string
           description: IATA code of the airport.
           example: TPE
-        ICAO:
+        AirportICAO:
           type: string
           description: ICAO code of the airport.
           example: RCTP
@@ -83,14 +83,15 @@ components:
               type: string
               description: GeoHash of the airport position.
               example: wsqnwtnkj
-        CityName:
+        AirportCityName:
           type: object
+          description: The name of the city where the airport is located.
           properties:
-            Zh_tw:
+            zhTw:
               type: string
               description: Chinese name of the city.
               example: 桃園市
-            En:
+            en:
               type: string
               description: English name of the city.
               example: Taoyuan
