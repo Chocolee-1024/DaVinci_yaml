@@ -1,9 +1,9 @@
 openapi: 3.0.0
 info:
-  title: TDX Airport Information API
+  title: TDX Airport Information Plugin
   description: 查詢特定機場的詳細資訊
   version: 1.0.0
-  servers:
+servers:
   - url: http://211.20.7.116:8839/api/v1
 
 paths:
@@ -20,15 +20,15 @@ paths:
               $ref: '#/components/schemas/AirportRequest'
       responses:
         '200':
-          description: Successful response with airport information
+          description: 成功返回機場資訊
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AirportResponse'
         '400':
-          description: Invalid request
+          description: 無效的請求
         '404':
-          description: Airport not found
+          description: 找不到機場
 
 components:
   schemas:
@@ -37,7 +37,7 @@ components:
       properties:
         AirportID:
           type: string
-          description: The ID of the airport to retrieve.
+          description: 要查詢的機場 ID
           example: TPE
 
     AirportResponse:
@@ -45,26 +45,26 @@ components:
       properties:
         AirportID:
           type: string
-          description: Airport ID
+          description: 機場代碼
           example: TPE
         AirportName:
           type: object
           properties:
             Zh_tw:
               type: string
-              description: Chinese name of the airport.
+              description: 機場的中文名稱
               example: 桃園國際機場
             En:
               type: string
-              description: English name of the airport.
-              example: Taoyuan
+              description: 機場的英文名稱
+              example: Taoyuan International Airport
         AirportIATA:
           type: string
-          description: IATA code of the airport.
+          description: 機場的 IATA 代碼
           example: TPE
         AirportICAO:
           type: string
-          description: ICAO code of the airport.
+          description: 機場的 ICAO 代碼
           example: RCTP
         AirportPosition:
           type: object
@@ -72,53 +72,54 @@ components:
             PositionLon:
               type: number
               format: float
-              description: Longitude of the airport.
+              description: 經度
               example: 121.231976
             PositionLat:
               type: number
               format: float
-              description: Latitude of the airport.
+              description: 緯度
               example: 25.0770119995
             GeoHash:
               type: string
-              description: GeoHash of the airport position.
+              description: 機場位置的 GeoHash
               example: wsqnwtnkj
         AirportCityName:
           type: object
-          description: The name of the city where the airport is located.
+          nullable: true
+          description: 城市名稱（可能為空）
           properties:
-            zhTw:
+            Zh_tw:
               type: string
-              description: Chinese name of the city.
+              description: 城市的中文名稱
               example: 桃園市
-            en:
+            En:
               type: string
-              description: English name of the city.
+              description: 城市的英文名稱
               example: Taoyuan
         AirportAddress:
           type: string
-          description: Address of the airport.
+          description: 機場地址
           example: 桃園市大園區航站南路9號
         AirportPhone:
           type: string
-          description: Phone number of the airport.
+          description: 機場電話號碼
           example: 03-2735081
         AirportNationality:
           type: string
-          description: Nationality of the airport.
+          description: 機場的國籍
           example: TW
         AuthorityID:
           type: string
-          description: The authority ID of the airport.
+          description: 機場管理機構的 ID
           example: CAA
         UpdateTime:
           type: string
           format: date-time
-          description: The time the airport information was last updated.
+          description: 機場資訊的更新時間
           example: 2024-09-17T08:43:40+08:00
         VersionID:
           type: integer
-          description: Version ID of the airport information.
+          description: 資訊的版本 ID
           example: 1484
 
 # # 定義 API 路徑
