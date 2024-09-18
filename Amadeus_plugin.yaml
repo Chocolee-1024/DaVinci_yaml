@@ -17,18 +17,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AirportRequest'
+              $ref: '#/components/schemas/Airport'
       responses:
         '200':
           description: 成功返回機場資訊
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AirportResponse'
+                $ref: '#/components/schemas/Airport'
         '400':
-          description: 無效的請求
+          description: 無效的請求，請檢查 AirportID 或輸入格式
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '404':
           description: 找不到機場
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: 伺服器內部錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:
@@ -121,6 +135,19 @@ components:
           type: integer
           description: 資訊的版本 ID
           example: 1484
+
+    ErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: 錯誤狀態碼
+          example: 400
+        errorMessage:
+          type: string
+          description: 錯誤訊息
+          example: 'Invalid AirportID provided'
+
 
 # # 定義 API 路徑
 # paths:
