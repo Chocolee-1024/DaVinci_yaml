@@ -1,236 +1,267 @@
 openapi: 3.0.0
 info:
   title: TDX Airport Information Plugin
-  description: 查詢特定台灣機場的詳細資訊
+  description: 查詢特定機場的詳細資訊
   version: 1.0.0
-  contact:
-    name: Developer
-    email: your-email@example.com
+  servers:
+  - url: http://211.20.7.116:8839/api/v1
 
-# API 授權方式
+paths:
+  /airplane/airport:
+    post:
+      summary: Retrieve airport information
+      operationId: getAirportInfo
+      requestBody:
+        description: Airport ID request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AirportRequest'
+      responses:
+        '200':
+          description: Successful response with airport information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirportResponse'
+        '400':
+          description: Invalid request
+        '404':
+          description: Airport not found
+
 components:
-  securitySchemes:
-    apiKeyAuth:
-      type: apiKey
-      in: header
-      name: authorization
+  schemas:
+    AirportRequest:
+      type: object
+      properties:
+        airportID:
+          type: string
+          description: The ID of the airport to retrieve.
+          example: TPE
 
-security:
-  - apiKeyAuth: []
-
-# 定義 API 路徑
-paths:
-  Airport/{AirportID}:
-    get:
-      summary: 查詢特定機場的詳細資訊
-      description: 根據機場代碼查詢機場的資訊
-      operationId: getAirportByID
-      parameters:
-        - name: AirportID
-          in: path
-          required: true
-          description: 機場的三字代碼，例如 TPE、TSA
-          schema:
-            type: string
-      responses:
-        '200':
-          description: 成功返回機場資料
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  AirportID:
-                    type: string
-                    description: 機場的代碼
-                  AirportName:
-                    type: object
-                    properties:
-                      Zh_tw:
-                        type: string
-                        description: 機場的中文名稱
-                      En:
-                        type: string
-                        description: 機場的英文名稱
-                  CityName:
-                    type: object
-                    properties:
-                      Zh_tw:
-                        type: string
-                        description: 城市的中文名稱
-                      En:
-                        type: string
-                        description: 城市的英文名稱
-                  Location:
-                    type: object
-                    properties:
-                      Latitude:
-                        type: number
-                        format: float
-                        description: 機場的緯度
-                      Longitude:
-                        type: number
-                        format: float
-                        description: 機場的經度
-                  IATA:
-                    type: string
-                    description: IATA 代碼
-                  ICAO:
-                    type: string
-                    description: ICAO 代碼
-        '401':
-          description: 未授權
-        '404':
-          description: 找不到指定的機場
-        '500':
-          description: 伺服器錯誤
-# 定義 API 路徑
-paths:
-  Airline/{AirlineID}:
-    get:
-      summary: 查詢特定航空公司的詳細資訊
-      description: 根據航空公司代碼查詢航空公司的資訊
-      operationId: getAirlineByID
-      parameters:
-        - name: AirlineID
-          in: path
-          required: true
-          description: 航空公司的代碼，例如 CI (中華航空)、BR (長榮航空)
-          schema:
-            type: string
-      responses:
-        '200':
-          description: 成功返回航空公司資料
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  AirlineID:
-                    type: string
-                    description: 航空公司的代碼
-                  AirlineName:
-                    type: object
-                    properties:
-                      Zh_tw:
-                        type: string
-                        description: 航空公司的中文名稱
-                      En:
-                        type: string
-                        description: 航空公司的英文名稱
-                  Country:
-                    type: object
-                    properties:
-                      Zh_tw:
-                        type: string
-                        description: 所屬國家的中文名稱
-                      En:
-                        type: string
-                        description: 所屬國家的英文名稱
-                  IATA:
-                    type: string
-                    description: IATA 代碼
-                  ICAO:
-                    type: string
-                    description: ICAO 代碼
-        '401':
-          description: 未授權
-        '404':
-          description: 找不到指定的航空公司
-        '500':
-          description: 伺服器錯誤
-# 定義 API 路徑
-paths:
-  GeneralSchedule/International:
-    get:
-      summary: 取得國際航空定期時刻表
-      description: 查詢所有國際航班的定期時刻表，並可過濾返回的航班資料。
-      operationId: getInternationalFlightSchedule
-      parameters:
-        - name: DepartureAirportID
-          in: query
-          required: true
-          description: 出發機場的代碼 (例如 TPE)
-          schema:
-            type: string
-        - name: ArrivalAirportID
-          in: query
-          required: true
-          description: 到達機場的代碼 (例如 JFK)
-          schema:
-            type: string
-        - name: airlineIATA
-          in: query
-          required: false
-          description: 航空公司的 IATA 代碼 (例如 CI)
-          schema:
-            type: string
-        - name: ScheduleStartDate
-          in: query
-          required: false
-          description: 查詢航班的開始日期 (ISO8601 格式，例如 2024-09-12)
-          schema:
-            type: string
-            format: date
-        - name: endDate
-          in: query
-          required: false
-          description: 查詢航班的結束日期 (ISO8601 格式，例如 2024-09-12)
-          schema:
-            type: string
-            format: date
-        - name: top
-          in: query
-          required: false
-          description: 限制返回的航班數量
-          schema:
-            type: integer
-            example: 10
-      responses:
-        '200':
-          description: 成功返回國際航班定期時刻表
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  airline:
-                    type: object
-                    properties:
-                      IATA:
-                        type: string
-                        description: 航空公司的 IATA 代碼
-                      name:
-                        type: string
-                        description: 航空公司名稱
-                  flights:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        flightNumber:
-                          type: string
-                          description: 航班號碼
-                        departureTime:
-                          type: string
-                          format: date-time
-                          description: 出發時間 (ISO8601 格式)
-                        departureAirport:
-                          type: string
-                          description: 出發機場的代碼
-                        arrivalAirport:
-                          type: string
-                          description: 到達機場的代碼
-                        airlineIATA:
-                          type: string
-                          description: 航空公司的 IATA 代碼
-        '401':
-          description: 未授權
-        '404':
-          description: 找不到符合條件的航班資料
-        '500':
-          description: 伺服器錯誤
-# 伺服器端點
-servers: 
-  - url: https://tdx.transportdata.tw/api/basic/v2/Air/
-    description: TDX 特定機場資訊 API 伺服器
+    AirportResponse:
+      type: object
+      properties:
+        airportID:
+          type: string
+          description: Airport ID
+          example: TPE
+        airportName:
+          type: object
+          properties:
+            zhTw:
+              type: string
+              description: Chinese name of the airport.
+              example: 桃園國際機場
+            en:
+              type: string
+              description: English name of the airport.
+              example: Taoyuan International Airport
+        iata:
+          type: string
+          description: IATA code of the airport.
+          example: TPE
+        icao:
+          type: string
+          description: ICAO code of the airport.
+          example: RCTP
+        airportPosition:
+          type: object
+          properties:
+            positionLon:
+              type: number
+              format: float
+              description: Longitude of the airport.
+              example: 121.231976
+            positionLat:
+              type: number
+              format: float
+              description: Latitude of the airport.
+              example: 25.0770119995
+            geoHash:
+              type: string
+              description: GeoHash of the airport position.
+              example: wsqnwtnkj
+        cityName:
+          type: object
+          properties:
+            zhTw:
+              type: string
+              description: Chinese name of the city.
+              example: 桃園市
+            en:
+              type: string
+              description: English name of the city.
+              example: Taoyuan
+        airportAddress:
+          type: string
+          description: Address of the airport.
+          example: 桃園市大園區航站南路9號
+        airportPhone:
+          type: string
+          description: Phone number of the airport.
+          example: 03-2735081
+        airportNationality:
+          type: string
+          description: Nationality of the airport.
+          example: TW
+        authorityID:
+          type: string
+          description: The authority ID of the airport.
+          example: CAA
+        updateTime:
+          type: string
+          format: date-time
+          description: The time the airport information was last updated.
+          example: 2024-09-17T08:43:40+08:00
+        versionID:
+          type: integer
+          description: Version ID of the airport information.
+          example: 1484
+# # 定義 API 路徑
+# paths:
+#   Airline/{AirlineID}:
+#     get:
+#       summary: 查詢特定航空公司的詳細資訊
+#       description: 根據航空公司代碼查詢航空公司的資訊
+#       operationId: getAirlineByID
+#       parameters:
+#         - name: AirlineID
+#           in: path
+#           required: true
+#           description: 航空公司的代碼，例如 CI (中華航空)、BR (長榮航空)
+#           schema:
+#             type: string
+#       responses:
+#         '200':
+#           description: 成功返回航空公司資料
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   AirlineID:
+#                     type: string
+#                     description: 航空公司的代碼
+#                   AirlineName:
+#                     type: object
+#                     properties:
+#                       Zh_tw:
+#                         type: string
+#                         description: 航空公司的中文名稱
+#                       En:
+#                         type: string
+#                         description: 航空公司的英文名稱
+#                   Country:
+#                     type: object
+#                     properties:
+#                       Zh_tw:
+#                         type: string
+#                         description: 所屬國家的中文名稱
+#                       En:
+#                         type: string
+#                         description: 所屬國家的英文名稱
+#                   IATA:
+#                     type: string
+#                     description: IATA 代碼
+#                   ICAO:
+#                     type: string
+#                     description: ICAO 代碼
+#         '401':
+#           description: 未授權
+#         '404':
+#           description: 找不到指定的航空公司
+#         '500':
+#           description: 伺服器錯誤
+# # 定義 API 路徑
+# paths:
+#   GeneralSchedule/International:
+#     get:
+#       summary: 取得國際航空定期時刻表
+#       description: 查詢所有國際航班的定期時刻表，並可過濾返回的航班資料。
+#       operationId: getInternationalFlightSchedule
+#       parameters:
+#         - name: DepartureAirportID
+#           in: query
+#           required: true
+#           description: 出發機場的代碼 (例如 TPE)
+#           schema:
+#             type: string
+#         - name: ArrivalAirportID
+#           in: query
+#           required: true
+#           description: 到達機場的代碼 (例如 JFK)
+#           schema:
+#             type: string
+#         - name: airlineIATA
+#           in: query
+#           required: false
+#           description: 航空公司的 IATA 代碼 (例如 CI)
+#           schema:
+#             type: string
+#         - name: ScheduleStartDate
+#           in: query
+#           required: false
+#           description: 查詢航班的開始日期 (ISO8601 格式，例如 2024-09-12)
+#           schema:
+#             type: string
+#             format: date
+#         - name: endDate
+#           in: query
+#           required: false
+#           description: 查詢航班的結束日期 (ISO8601 格式，例如 2024-09-12)
+#           schema:
+#             type: string
+#             format: date
+#         - name: top
+#           in: query
+#           required: false
+#           description: 限制返回的航班數量
+#           schema:
+#             type: integer
+#             example: 10
+#       responses:
+#         '200':
+#           description: 成功返回國際航班定期時刻表
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   airline:
+#                     type: object
+#                     properties:
+#                       IATA:
+#                         type: string
+#                         description: 航空公司的 IATA 代碼
+#                       name:
+#                         type: string
+#                         description: 航空公司名稱
+#                   flights:
+#                     type: array
+#                     items:
+#                       type: object
+#                       properties:
+#                         flightNumber:
+#                           type: string
+#                           description: 航班號碼
+#                         departureTime:
+#                           type: string
+#                           format: date-time
+#                           description: 出發時間 (ISO8601 格式)
+#                         departureAirport:
+#                           type: string
+#                           description: 出發機場的代碼
+#                         arrivalAirport:
+#                           type: string
+#                           description: 到達機場的代碼
+#                         airlineIATA:
+#                           type: string
+#                           description: 航空公司的 IATA 代碼
+#         '401':
+#           description: 未授權
+#         '404':
+#           description: 找不到符合條件的航班資料
+#         '500':
+#           description: 伺服器錯誤
