@@ -4,7 +4,7 @@ info:
   description: 查詢特定機場的詳細資訊
   version: 1.0.0
 servers:
-  - url: http://211.20.7.116:8839/api/v1
+  - url: https://davinci-airplane.nutc-imac.com/api/v1
 
 paths:
   /airplane/airport:
