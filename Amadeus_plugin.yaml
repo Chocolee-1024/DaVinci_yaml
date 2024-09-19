@@ -150,7 +150,7 @@ components:
 
 
 paths:
-  airplane/airline:
+  /airplane/airline:
     post:
       summary: Retrieve airline information
       operationId: getAirlineInfo
@@ -249,7 +249,7 @@ components:
           example: 1
 # 定義 API 路徑
 paths:
-  airplane/flight:
+  /airplane/flight:
     post:
       summary: 查詢航班資訊
       operationId: getFlightInfo
