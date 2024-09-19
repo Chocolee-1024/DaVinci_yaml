@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: TDX Airport Information Plugin
-  description: 查詢特定機場的詳細資訊
+  description: 查詢有關航空的詳細資訊
   version: 1.0.0
 servers:
   - url: https://davinci-airplane.nutc-imac.com/api/v1
@@ -9,7 +9,7 @@ servers:
 paths:
   /airplane/airport:
     post:
-      summary: Retrieve airport information
+      summary: 查詢有關機場的資訊
       operationId: getAirportInfo
       requestBody:
         description: Airport ID request
@@ -152,7 +152,7 @@ components:
 paths:
   /airplane/airline:
     post:
-      summary: Retrieve airline information
+      summary: 查詢有功航空公司的資訊
       operationId: getAirlineInfo
       requestBody:
         description: Airline ID request
