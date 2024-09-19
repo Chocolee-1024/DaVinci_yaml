@@ -150,7 +150,7 @@ components:
 
 
 paths:
-  /airline/{AirlineID}:
+  airplane/airline:
     post:
       summary: Retrieve airline information
       operationId: getAirlineInfo
