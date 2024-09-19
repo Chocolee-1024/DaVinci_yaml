@@ -17,14 +17,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Airport'
+              $ref: '#/components/schemas/AirportRequest'
       responses:
         '200':
           description: 成功返回機場資訊
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Airport'
+                $ref: '#/components/schemas/AirportResponse'
         '400':
           description: 無效的請求，請檢查 AirportID 或輸入格式
           content:
@@ -160,14 +160,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Airline'
+              $ref: '#/components/schemas/AirlineRequest'
       responses:
         '200':
           description: 成功返回航空公司資料
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Airline'
+                $ref: '#/components/schemas/AirlineResponse'
         '401':
           description: 未授權
         '404':
@@ -247,94 +247,187 @@ components:
           type: integer
           description: 版本 ID
           example: 1
-# # 定義 API 路徑
-# paths:
-#   GeneralSchedule/International:
-#     get:
-#       summary: 取得國際航空定期時刻表
-#       description: 查詢所有國際航班的定期時刻表，並可過濾返回的航班資料。
-#       operationId: getInternationalFlightSchedule
-#       parameters:
-#         - name: DepartureAirportID
-#           in: query
-#           required: true
-#           description: 出發機場的代碼 (例如 TPE)
-#           schema:
-#             type: string
-#         - name: ArrivalAirportID
-#           in: query
-#           required: true
-#           description: 到達機場的代碼 (例如 JFK)
-#           schema:
-#             type: string
-#         - name: airlineIATA
-#           in: query
-#           required: false
-#           description: 航空公司的 IATA 代碼 (例如 CI)
-#           schema:
-#             type: string
-#         - name: ScheduleStartDate
-#           in: query
-#           required: false
-#           description: 查詢航班的開始日期 (ISO8601 格式，例如 2024-09-12)
-#           schema:
-#             type: string
-#             format: date
-#         - name: endDate
-#           in: query
-#           required: false
-#           description: 查詢航班的結束日期 (ISO8601 格式，例如 2024-09-12)
-#           schema:
-#             type: string
-#             format: date
-#         - name: top
-#           in: query
-#           required: false
-#           description: 限制返回的航班數量
-#           schema:
-#             type: integer
-#             example: 10
-#       responses:
-#         '200':
-#           description: 成功返回國際航班定期時刻表
-#           content:
-#             application/json:
-#               schema:
-#                 type: object
-#                 properties:
-#                   airline:
-#                     type: object
-#                     properties:
-#                       IATA:
-#                         type: string
-#                         description: 航空公司的 IATA 代碼
-#                       name:
-#                         type: string
-#                         description: 航空公司名稱
-#                   flights:
-#                     type: array
-#                     items:
-#                       type: object
-#                       properties:
-#                         flightNumber:
-#                           type: string
-#                           description: 航班號碼
-#                         departureTime:
-#                           type: string
-#                           format: date-time
-#                           description: 出發時間 (ISO8601 格式)
-#                         departureAirport:
-#                           type: string
-#                           description: 出發機場的代碼
-#                         arrivalAirport:
-#                           type: string
-#                           description: 到達機場的代碼
-#                         airlineIATA:
-#                           type: string
-#                           description: 航空公司的 IATA 代碼
-#         '401':
-#           description: 未授權
-#         '404':
-#           description: 找不到符合條件的航班資料
-#         '500':
-#           description: 伺服器錯誤
+# 定義 API 路徑
+paths:
+  /flight:
+    post:
+      summary: 查詢航班資訊
+      operationId: getFlightInfo
+      requestBody:
+        description: 航班查詢請求
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlightRequest'
+      responses:
+        '200':
+          description: 成功返回航班資料
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlightResponse'
+        '400':
+          description: 無效的請求
+        '404':
+          description: 找不到航班資料
+
+components:
+  schemas:
+    FlightRequest:
+      type: object
+      properties:
+        AirlineID:
+          type: string
+          description: 航空公司的代碼
+          example: CI
+        ScheduleStartDate:
+          type: string
+          format: date
+          description: 排程開始日期
+          example: 2024-09-18
+        ScheduleEndDate:
+          type: string
+          format: date
+          description: 排程結束日期
+          example: 2024-09-25
+        FlightNumber:
+          type: string
+          description: 航班號碼
+          example: CI123
+        DepartureAirportID:
+          type: string
+          description: 出發機場代碼
+          example: TPE
+        DepartureTime:
+          type: string
+          format: date-time
+          description: 出發時間
+          example: 2024-09-18T10:00:00
+        CodeShare:
+          type: array
+          items:
+            type: string
+          description: 共享代碼
+          example: ["CI123", "BR456"]
+        ArrivalAirportID:
+          type: string
+          description: 到達機場代碼
+          example: JFK
+        ArrivalTime:
+          type: string
+          format: date-time
+          description: 到達時間
+          example: 2024-09-18T15:00:00
+        Monday:
+          type: boolean
+          description: 是否周一運行
+        Tuesday:
+          type: boolean
+          description: 是否周二運行
+        Wednesday:
+          type: boolean
+          description: 是否周三運行
+        Thursday:
+          type: boolean
+          description: 是否周四運行
+        Friday:
+          type: boolean
+          description: 是否周五運行
+        Saturday:
+          type: boolean
+          description: 是否周六運行
+        Sunday:
+          type: boolean
+          description: 是否周日運行
+        UpdateTime:
+          type: string
+          format: date-time
+          description: 更新時間
+          example: 2024-09-18T10:30:00
+        VersionID:
+          type: integer
+          description: 版本號
+          example: 1
+
+    FlightResponse:
+      type: object
+      properties:
+        AirlineID:
+          type: string
+          description: 航空公司的代碼
+          example: CI
+        ScheduleStartDate:
+          type: string
+          format: date
+          description: 排程開始日期
+          example: 2024-09-18
+        ScheduleEndDate:
+          type: string
+          format: date
+          description: 排程結束日期
+          example: 2024-09-25
+        FlightNumber:
+          type: string
+          description: 航班號碼
+          example: CI123
+        DepartureAirportID:
+          type: string
+          description: 出發機場代碼
+          example: TPE
+        DepartureTime:
+          type: string
+          format: date-time
+          description: 出發時間
+          example: 2024-09-18T10:00:00
+        CodeShare:
+          type: array
+          items:
+            type: string
+          description: 共享代碼
+          example: ["CI123", "BR456"]
+        ArrivalAirportID:
+          type: string
+          description: 到達機場代碼
+          example: JFK
+        ArrivalTime:
+          type: string
+          format: date-time
+          description: 到達時間
+          example: 2024-09-18T15:00:00
+        Monday:
+          type: boolean
+          description: 是否周一運行
+        Tuesday:
+          type: boolean
+          description: 是否周二運行
+        Wednesday:
+          type: boolean
+          description: 是否周三運行
+        Thursday:
+          type: boolean
+          description: 是否周四運行
+        Friday:
+          type: boolean
+          description: 是否周五運行
+        Saturday:
+          type: boolean
+          description: 是否周六運行
+        Sunday:
+          type: boolean
+          description: 是否周日運行
+        UpdateTime:
+          type: string
+          format: date-time
+          description: 更新時間
+          example: 2024-09-18T10:30:00
+        VersionID:
+          type: integer
+          description: 版本號
+          example: 1
+        Terminal:
+          type: string
+          description: 航站樓信息
+          example: Terminal 1
