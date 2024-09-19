@@ -149,61 +149,104 @@ components:
           example: 'Invalid AirportID provided'
 
 
-# # 定義 API 路徑
-# paths:
-#   Airline/{AirlineID}:
-#     get:
-#       summary: 查詢特定航空公司的詳細資訊
-#       description: 根據航空公司代碼查詢航空公司的資訊
-#       operationId: getAirlineByID
-#       parameters:
-#         - name: AirlineID
-#           in: path
-#           required: true
-#           description: 航空公司的代碼，例如 CI (中華航空)、BR (長榮航空)
-#           schema:
-#             type: string
-#       responses:
-#         '200':
-#           description: 成功返回航空公司資料
-#           content:
-#             application/json:
-#               schema:
-#                 type: object
-#                 properties:
-#                   AirlineID:
-#                     type: string
-#                     description: 航空公司的代碼
-#                   AirlineName:
-#                     type: object
-#                     properties:
-#                       Zh_tw:
-#                         type: string
-#                         description: 航空公司的中文名稱
-#                       En:
-#                         type: string
-#                         description: 航空公司的英文名稱
-#                   Country:
-#                     type: object
-#                     properties:
-#                       Zh_tw:
-#                         type: string
-#                         description: 所屬國家的中文名稱
-#                       En:
-#                         type: string
-#                         description: 所屬國家的英文名稱
-#                   IATA:
-#                     type: string
-#                     description: IATA 代碼
-#                   ICAO:
-#                     type: string
-#                     description: ICAO 代碼
-#         '401':
-#           description: 未授權
-#         '404':
-#           description: 找不到指定的航空公司
-#         '500':
-#           description: 伺服器錯誤
+paths:
+  /airline/{AirlineID}:
+    post:
+      summary: Retrieve airline information
+      operationId: getAirlineInfo
+      requestBody:
+        description: Airline ID request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Airline'
+      responses:
+        '200':
+          description: 成功返回航空公司資料
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Airline'
+        '401':
+          description: 未授權
+        '404':
+          description: 找不到指定的航空公司
+        '500':
+          description: 伺服器錯誤
+
+components:
+  schemas:
+    AirlineRequest:
+      type: object
+      properties:
+        AirlineID:
+          type: string
+          description: 航空公司的代碼
+          example: CI
+
+    AirlineResponse:
+      type: object
+      properties:
+        AirlineID:
+          type: string
+          description: 航空公司的代碼
+          example: CI
+        AirlineName:
+          type: object
+          properties:
+            Zh_tw:
+              type: string
+              description: 航空公司的中文名稱
+              example: 中華航空
+            En:
+              type: string
+              description: 航空公司的英文名稱
+              example: China Airlines
+        AirlineNameAlias:
+          type: object
+          properties:
+            Zh_tw:
+              type: string
+              description: 航空公司的中文別名
+              example: 華航
+            En:
+              type: string
+              description: 航空公司的英文別名
+              example: CAL
+        AirlineIATA:
+          type: string
+          description: IATA 代碼
+          example: CI
+        AirlineICAO:
+          type: string
+          description: ICAO 代碼
+          example: CAL
+        AirlineEmail:
+          type: string
+          description: 航空公司的電子郵件
+          example: info@china-airlines.com.tw
+        AirlineAddress:
+          type: string
+          description: 航空公司的地址
+          example: 台北市中正區中山南路123號
+        AirlinePhone:
+          type: string
+          description: 航空公司的聯繫電話
+          example: 02-12345678
+        AirlineNationality:
+          type: string
+          description: 航空公司所屬國籍
+          example: TW
+        UpdateTime:
+          type: string
+          format: date-time
+          description: 更新時間
+          example: 2024-09-18T12:34:56+08:00
+        VersionID:
+          type: integer
+          description: 版本 ID
+          example: 1
 # # 定義 API 路徑
 # paths:
 #   GeneralSchedule/International:
