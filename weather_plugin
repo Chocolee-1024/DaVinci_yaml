@@ -32,6 +32,14 @@ paths:
           schema:
             type: integer
             example: 3
+        - name: dt
+          in: query
+          required: false
+          description: 特定日期（yyyy-MM-dd 格式）來查詢未來某一天的天氣
+          schema:
+            type: string
+            format: date
+            example: "2024-09-25"
         - name: aqi
           in: query
           required: false
