@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Weather API
-  description: 查詢即時天氣數據
+  description: 查詢即時及歷史天氣數據
   version: 1.0.0
 servers:
   - url: https://api.weatherapi.com/v1
@@ -11,7 +11,7 @@ paths:
   /current.json:
     get:
       summary: 查詢某城市的即時天氣
-      description: 根據城市名稱查詢即時天氣數據
+      description: 根據城市名稱或經緯度查詢即時天氣數據
       parameters:
         - name: key
           in: query
@@ -22,7 +22,7 @@ paths:
         - name: q
           in: query
           required: true
-          description: 城市名稱或緯度、經度
+          description: 城市名稱或緯度、經度（例如："Taipei" 或 "24.14,120.68"）
           schema:
             type: string
         - name: aqi
@@ -40,47 +40,47 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  location:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: 城市名稱
-                      country:
-                        type: string
-                        description: 國家名稱
-                      lat:
-                        type: number
-                        description: 緯度
-                      lon:
-                        type: number
-                        description: 經度
-                      localtime:
-                        type: string
-                        description: 當地時間
-                  current:
-                    type: object
-                    properties:
-                      temp_c:
-                        type: number
-                        description: 攝氏溫度
-                      condition:
-                        type: object
-                        properties:
-                          text:
-                            type: string
-                            description: 天氣狀況描述
-                      wind_kph:
-                        type: number
-                        description: 風速（公里/小時）
-                      humidity:
-                        type: number
-                        description: 濕度（百分比）
-                      cloud:
-                        type: number
-                        description: 雲量
+                $ref: '#/components/schemas/WeatherData'
+        '400':
+          description: 錯誤請求，缺少必要參數或格式錯誤
+        '401':
+          description: 未授權，API 金鑰無效
+        '404':
+          description: 城市名稱未找到
+        '500':
+          description: 伺服器錯誤
+
+  /history.json:
+    get:
+      summary: 查詢某城市的歷史天氣
+      description: 根據日期查詢某城市的歷史天氣數據
+      parameters:
+        - name: key
+          in: query
+          required: true
+          description: WeatherAPI 提供的 API 金鑰
+          schema:
+            type: string
+        - name: q
+          in: query
+          required: true
+          description: 城市名稱或緯度、經度（例如："Taipei" 或 "24.14,120.68"）
+          schema:
+            type: string
+        - name: dt
+          in: query
+          required: true
+          description: 查詢的日期，格式為 YYYY-MM-DD
+          schema:
+            type: string
+            example: "2024-09-20"
+      responses:
+        '200':
+          description: 成功返回歷史天氣數據
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeatherData'
         '400':
           description: 錯誤請求，缺少必要參數或格式錯誤
         '401':
@@ -100,23 +100,55 @@ components:
           properties:
             name:
               type: string
+              description: 城市名稱
             region:
               type: string
+              description: 城市所在區域
             country:
               type: string
+              description: 國家名稱
+            lat:
+              type: number
+              description: 緯度
+            lon:
+              type: number
+              description: 經度
+            localtime:
+              type: string
+              description: 當地時間
         current:
           type: object
           properties:
             temp_c:
               type: number
+              description: 當前溫度（攝氏）
+            temp_f:
+              type: number
+              description: 當前溫度（華氏）
+            is_day:
+              type: boolean
+              description: 是否為白天，1 表示白天，0 表示夜晚
             condition:
               type: object
               properties:
                 text:
                   type: string
+                  description: 天氣狀況描述
+                icon:
+                  type: string
+                  description: 天氣狀況的圖標 URL
             wind_kph:
               type: number
+              description: 風速（公里/小時）
             humidity:
               type: number
+              description: 濕度（百分比）
             cloud:
               type: number
+              description: 雲量（百分比）
+            feelslike_c:
+              type: number
+              description: 體感溫度（攝氏）
+            feelslike_f:
+              type: number
+              description: 體感溫度（華氏）
