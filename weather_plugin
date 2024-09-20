@@ -7,12 +7,29 @@ servers:
   - url: https://api.weatherapi.com/v1
     description: WeatherAPI 伺服器
 
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: key
+
+security:
+  - ApiKeyAuth: []
+
 paths:
   /forecast.json:
     get:
       summary: 查詢某城市的未來天氣預報
       description: 根據城市名稱查詢未來天氣數據
       parameters:
+        - name: key
+          in: query
+          required: true
+          description: WeatherAPI 提供的 API 金鑰
+          schema:
+            type: string
+            example: 9406dc3245a4438293354744241109  # 這裡放你的 API key 示例
         - name: q
           in: query
           required: true
@@ -80,4 +97,38 @@ paths:
                         description: 當地時間
                   forecast:
                     type: object
-                    properties
+                    properties:
+                      forecastday:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            date:
+                              type: string
+                              description: 預報日期
+                            day:
+                              type: object
+                              properties:
+                                maxtemp_c:
+                                  type: number
+                                  description: 最高溫度（攝氏）
+                                mintemp_c:
+                                  type: number
+                                  description: 最低溫度（攝氏）
+                                avgtemp_c:
+                                  type: number
+                                  description: 平均溫度（攝氏）
+                                condition:
+                                  type: object
+                                  properties:
+                                    text:
+                                      type: string
+                                      description: 天氣狀況描述
+        '400':
+          description: 錯誤請求，缺少必要參數或格式錯誤
+        '401':
+          description: 未授權，API 金鑰無效
+        '404':
+          description: 城市名稱未找到
+        '500':
+          description: 伺服器錯誤
