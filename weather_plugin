@@ -6,17 +6,6 @@ info:
 servers:
   - url: https://api.weatherapi.com/v1
     description: WeatherAPI 伺服器
-
-components:
-  securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: query
-      name: key
-
-security:
-  - ApiKeyAuth: []
-
 paths:
   /forecast.json:
     get:
@@ -29,7 +18,7 @@ paths:
           description: WeatherAPI 提供的 API 金鑰
           schema:
             type: string
-            example: 9406dc3245a4438293354744241109  # 這裡放你的 API key 示例
+            example: 這裡放你的 API key 
         - name: q
           in: query
           required: true
@@ -124,11 +113,3 @@ paths:
                                     text:
                                       type: string
                                       description: 天氣狀況描述
-        '400':
-          description: 錯誤請求，缺少必要參數或格式錯誤
-        '401':
-          description: 未授權，API 金鑰無效
-        '404':
-          description: 城市名稱未找到
-        '500':
-          description: 伺服器錯誤
