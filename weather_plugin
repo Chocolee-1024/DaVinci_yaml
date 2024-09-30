@@ -8,49 +8,43 @@ servers:
     description: WeatherAPI 伺服器
 paths:
   /weather:
-    get:
+    post:
       summary: 查詢某城市的未來天氣預報
       description: 根據城市名稱查詢未來天氣數據
-      parameters:
-        - name: q
-          in: query
-          required: true
-          description: 城市名稱或緯度、經度（例如："Taipei" 或 "24.14,120.68"）
-          schema:
-            type: string
-        - name: days
-          in: query
-          required: true
-          description: 查詢未來幾天的天氣數據（1-10 天）
-          schema:
-            type: integer
-            example: 3
-        - name: dt
-          in: query
-          required: false
-          description: 特定日期（yyyy-MM-dd 格式）來查詢未來某一天的天氣
-          schema:
-            type: string
-            format: date
-            example: "2024-09-25"
-        - name: aqi
-          in: query
-          required: false
-          description: 是否查詢空氣質量指數，預設為 "no"
-          schema:
-            type: string
-            enum:
-              - no
-              - yes
-        - name: alerts
-          in: query
-          required: false
-          description: 是否查詢天氣警報，預設為 "no"
-          schema:
-            type: string
-            enum:
-              - no
-              - yes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                q:
+                  type: string
+                  description: 城市名稱或緯度、經度（例如："Taipei" 或 "24.14,120.68"）
+                  example: "Taipei"
+                days:
+                  type: integer
+                  description: 查詢未來幾天的天氣數據（1-10 天）
+                  example: 3
+                dt:
+                  type: string
+                  format: date
+                  description: 特定日期（yyyy-MM-dd 格式）來查詢未來某一天的天氣
+                  example: "2024-09-25"
+                aqi:
+                  type: string
+                  description: 是否查詢空氣質量指數，預設為 "no"
+                  enum:
+                    - no
+                    - yes
+                  example: "no"
+                alerts:
+                  type: string
+                  description: 是否查詢天氣警報，預設為 "no"
+                  enum:
+                    - no
+                    - yes
+                  example: "no"
       responses:
         '200':
           description: 成功返回未來天氣數據
@@ -131,175 +125,4 @@ paths:
                                   type: number
                                   description: 平均能見度（公里）
                                 avgvis_miles:
-                                  type: number
-                                  description: 平均能見度（英里）
-                                avghumidity:
-                                  type: integer
-                                  description: 平均濕度（百分比）
-                                daily_will_it_rain:
-                                  type: integer
-                                  description: 是否會下雨（0 或 1）
-                                daily_chance_of_rain:
-                                  type: integer
-                                  description: 降雨機率（百分比）
-                                daily_will_it_snow:
-                                  type: integer
-                                  description: 是否會下雪（0 或 1）
-                                daily_chance_of_snow:
-                                  type: integer
-                                  description: 降雪機率（百分比）
-                                uv:
-                                  type: number
-                                  description: 紫外線指數
-                                condition:
-                                  type: object
-                                  properties:
-                                    text:
-                                      type: string
-                                      description: 天氣狀況描述
-                                    icon:
-                                      type: string
-                                      description: 圖標 URL
-                                    code:
-                                      type: integer
-                                      description: 天氣狀況代碼
-                            astro:
-                              type: object
-                              properties:
-                                sunrise:
-                                  type: string
-                                  description: 日出時間
-                                sunset:
-                                  type: string
-                                  description: 日落時間
-                                moonrise:
-                                  type: string
-                                  description: 月出時間
-                                moonset:
-                                  type: string
-                                  description: 月落時間
-                                moon_phase:
-                                  type: string
-                                  description: 月相
-                                moon_illumination:
-                                  type: string
-                                  description: 月亮光照
-                                is_moon_up:
-                                  type: integer
-                                  description: 月亮是否在空中（0 或 1）
-                                is_sun_up:
-                                  type: integer
-                                  description: 太陽是否在空中（0 或 1）
-                            hour:
-                              type: array
-                              items:
-                                type: object
-                                properties:
-                                  time_epoch:
-                                    type: integer
-                                    description: 預報時間的 Epoch 值
-                                  time:
-                                    type: string
-                                    description: 預報時間
-                                  temp_c:
-                                    type: number
-                                    description: 溫度（攝氏）
-                                  temp_f:
-                                    type: number
-                                    description: 溫度（華氏）
-                                  is_day:
-                                    type: integer
-                                    description: 是否為白天（0 或 1）
-                                  condition:
-                                    type: object
-                                    properties:
-                                      text:
-                                        type: string
-                                        description: 天氣狀況描述
-                                      icon:
-                                        type: string
-                                        description: 圖標 URL
-                                      code:
-                                        type: integer
-                                        description: 天氣狀況代碼
-                                  wind_mph:
-                                    type: number
-                                    description: 風速（英里/小時）
-                                  wind_kph:
-                                    type: number
-                                    description: 風速（公里/小時）
-                                  wind_degree:
-                                    type: integer
-                                    description: 風的角度
-                                  wind_dir:
-                                    type: string
-                                    description: 風的方向
-                                  pressure_mb:
-                                    type: number
-                                    description: 氣壓（毫巴）
-                                  pressure_in:
-                                    type: number
-                                    description: 氣壓（英吋）
-                                  precip_mm:
-                                    type: number
-                                    description: 降水量（毫米）
-                                  precip_in:
-                                    type: number
-                                    description: 降水量（英吋）
-                                  humidity:
-                                    type: integer
-                                    description: 濕度（百分比）
-                                  cloud:
-                                    type: integer
-                                    description: 雲量（百分比）
-                                  feelslike_c:
-                                    type: number
-                                    description: 體感溫度（攝氏）
-                                  feelslike_f:
-                                    type: number
-                                    description: 體感溫度（華氏）
-                                  windchill_c:
-                                    type: number
-                                    description: 風寒指數（攝氏）
-                                  windchill_f:
-                                    type: number
-                                    description: 風寒指數（華氏）
-                                  heatindex_c:
-                                    type: number
-                                    description: 體感熱度指數（攝氏）
-                                  heatindex_f:
-                                    type: number
-                                    description: 體感熱度指數（華氏）
-                                  dewpoint_c:
-                                    type: number
-                                    description: 露點溫度（攝氏）
-                                  dewpoint_f:
-                                    type: number
-                                    description: 露點溫度（華氏）
-                                  will_it_rain:
-                                    type: integer
-                                    description: 是否會下雨（0 或 1）
-                                  chance_of_rain:
-                                    type: integer
-                                    description: 降雨機率（百分比）
-                                  will_it_snow:
-                                    type: integer
-                                    description: 是否會下雪（0 或 1）
-                                  chance_of_snow:
-                                    type: integer
-                                    description: 降雪機率（百分比）
-                                  vis_km:
-                                    type: number
-                                    description: 能見度（公里）
-                                  vis_miles:
-                                    type: number
-                                    description: 能見度（英里）
-                                  gust_mph:
-                                    type: number
-                                    description: 陣風風速（英里/小時）
-                                  gust_kph:
-                                    type: number
-                                    description: 陣風風速（公里/小時）
-                                  uv:
-                                    type: number
-                                    description:
+    
