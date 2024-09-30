@@ -4,7 +4,7 @@ info:
   description: 查詢某城市未來天氣預報
   version: 1.0.0
 servers:
-  - url: https://davinci-weather:8838/api/v1
+  - url: https://davinci-weather.nutc-imac.com/api/v1
     description: WeatherAPI 伺服器
 paths:
   /weather:
