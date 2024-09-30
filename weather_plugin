@@ -4,21 +4,14 @@ info:
   description: 查詢某城市未來天氣預報
   version: 1.0.0
 servers:
-  - url: https://api.weatherapi.com/v1
+  - url: http://10.20.1.229:8838/api/v1
     description: WeatherAPI 伺服器
 paths:
-  /forecast.json:
+  /weather:
     get:
       summary: 查詢某城市的未來天氣預報
       description: 根據城市名稱查詢未來天氣數據
       parameters:
-        - name: key
-          in: query
-          required: true
-          description: WeatherAPI 提供的 API 金鑰
-          schema:
-            type: string
-            example: 這裡放你的 API key 
         - name: q
           in: query
           required: true
