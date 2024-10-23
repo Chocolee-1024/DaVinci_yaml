@@ -1,0 +1,526 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  license:
+    name: MIT
+servers:
+  - url: http://petstore.swagger.io/v1
+paths:
+  /pets:
+    get:
+      summary: List all pets
+      operationId: listPets
+      tags:
+        - pets
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            maximum: 100
+            format: int32
+      responses:
+        '200':
+          description: A paged array of pets
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Pets"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a pet
+      operationId: createPets
+      tags:
+        - pets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '201':
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /pets/{petId}:
+    get:
+      summary: Info for a specific pet
+      operationId: showPetById
+      tags:
+        - pets
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The id of the pet to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /airplane/airport:
+    post:
+      summary: 查詢有關機場的資訊
+      operationId: getAirportInfo
+      requestBody:
+        description: Airport ID request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AirportRequest'
+      responses:
+        '200':
+          description: 成功返回機場資訊
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirportResponse'
+        '400':
+          description: 無效的請求，請檢查 AirportID 或輸入格式
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: 找不到機場
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: 伺服器內部錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /airplane/airline:
+    post:
+      summary: 查詢有功航空公司的資訊
+      operationId: getAirlineInfo
+      requestBody:
+        description: Airline ID request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AirlineRequest'
+      responses:
+        '200':
+          description: 成功返回航空公司資料
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirlineResponse'
+        '401':
+          description: 未授權
+        '404':
+          description: 找不到指定的航空公司
+        '500':
+          description: 伺服器錯誤
+  /airplane/flight:
+    post:
+      summary: 查詢航班資訊
+      operationId: getFlightInfo
+      requestBody:
+        description: 航班查詢請求
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlightRequest'
+      responses:
+        '200':
+          description: 成功返回航班資料
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlightResponse'
+        '400':
+          description: 無效的請求
+        '404':
+          description: 找不到航班資料
+
+components:
+  schemas:
+    Pet:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        tag:
+          type: string
+    Pets:
+      type: array
+      maxItems: 100
+      items:
+        $ref: "#/components/schemas/Pet"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    AirportRequest:
+      type: object
+      properties:
+        AirportID:
+          type: string
+          description: 要查詢的機場 ID
+          example: TPE
+    AirportResponse:
+      type: object
+      properties:
+        AirportID:
+          type: string
+          description: 機場代碼
+          example: TPE
+        AirportName:
+          type: object
+          properties:
+            Zh_tw:
+              type: string
+              description: 機場的中文名稱
+              example: 桃園國際機場
+            En:
+              type: string
+              description: 機場的英文名稱
+              example: Taoyuan International Airport
+        AirportIATA:
+          type: string
+          description: 機場的 IATA 代碼
+          example: TPE
+        AirportICAO:
+          type: string
+          description: 機場的 ICAO 代碼
+          example: RCTP
+        AirportPosition:
+          type: object
+          properties:
+            PositionLon:
+              type: number
+              format: float
+              description: 經度
+              example: 121.231976
+            PositionLat:
+              type: number
+              format: float
+              description: 緯度
+              example: 25.0770119995
+            GeoHash:
+              type: string
+              description: 機場位置的 GeoHash
+              example: wsqnwtnkj
+        AirportCityName:
+          type: object
+          nullable: true
+          description: 城市名稱（可能為空）
+          properties:
+            Zh_tw:
+              type: string
+              description: 城市的中文名稱
+              example: 桃園市
+            En:
+              type: string
+              description: 城市的英文名稱
+              example: Taoyuan
+        AirportAddress:
+          type: string
+          description: 機場地址
+          example: 桃園市大園區航站南路9號
+        AirportPhone:
+          type: string
+          description: 機場電話號碼
+          example: 03-2735081
+        AirportNationality:
+          type: string
+          description: 機場的國籍
+          example: TW
+        AuthorityID:
+          type: string
+          description: 機場管理機構的 ID
+          example: CAA
+        UpdateTime:
+          type: string
+          format: date-time
+          description: 機場資訊的更新時間
+          example: 2024-09-17T08:43:40+08:00
+        VersionID:
+          type: integer
+          description: 資訊的版本 ID
+          example: 1484
+    ErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: 錯誤狀態碼
+          example: 400
+        errorMessage:
+          type: string
+          description: 錯誤訊息
+          example: 'Invalid AirportID provided'
+    AirlineRequest:
+      type: object
+      properties:
+        AirlineID:
+          type: string
+          description: 航空公司的代碼
+          example: CI
+    AirlineResponse:
+      type: object
+      properties:
+        AirlineID:
+          type: string
+          description: 航空公司的代碼
+          example: CI
+        AirlineName:
+          type: object
+          properties:
+            Zh_tw:
+              type: string
+              description: 航空公司的中文名稱
+              example: 中華航空
+            En:
+              type: string
+              description: 航空公司的英文名稱
+              example: China Airlines
+        AirlineNameAlias:
+          type: object
+          properties:
+            Zh_tw:
+              type: string
+              description: 航空公司的中文別名
+              example: 華航
+            En:
+              type: string
+              description: 航空公司的英文別名
+              example: CAL
+        AirlineIATA:
+          type: string
+          description: IATA 代碼
+          example: CI
+        AirlineICAO:
+          type: string
+          description: ICAO 代碼
+          example: CAL
+        AirlineEmail:
+          type: string
+          description: 航空公司的電子郵件
+          example: info@china-airlines.com.tw
+        AirlineAddress:
+          type: string
+          description: 航空公司的地址
+          example: 台北市中正區中山南路123號
+        AirlinePhone:
+          type: string
+          description: 航空公司的聯繫電話
+          example: 02-12345678
+        AirlineNationality:
+          type: string
+          description: 航空公司所屬國籍
+          example: TW
+        UpdateTime:
+          type: string
+          format: date-time
+          description: 更新時間
+          example: 2024-09-18T12:34:56+08:00
+        VersionID:
+          type: integer
+          description: 版本 ID
+          example: 1
+    FlightRequest:
+      type: object
+      properties:
+        AirlineID:
+          type: string
+          description: 航空公司的代碼
+          example: CI
+        ScheduleStartDate:
+          type: string
+          format: date
+          description: 排程開始日期
+          example: 2024-09-18
+        ScheduleEndDate:
+          type: string
+          format: date
+          description: 排程結束日期
+          example: 2024-09-25
+        FlightNumber:
+          type: string
+          description: 航班號碼
+          example: CI123
+        DepartureAirportID:
+          type: string
+          description: 出發機場代碼
+          example: TPE
+        DepartureTime:
+          type: string
+          format: date-time
+          description: 出發時間
+          example: 2024-09-18T10:00:00
+        CodeShare:
+          type: array
+          items:
+            type: string
+          description: 共享代碼
+          example: ["CI123", "BR456"]
+        ArrivalAirportID:
+          type: string
+          description: 到達機場代碼
+          example: JFK
+        ArrivalTime:
+          type: string
+          format: date-time
+          description: 到達時間
+          example: 2024-09-18T15:00:00
+        Monday:
+          type: boolean
+          description: 是否周一運行
+        Tuesday:
+          type: boolean
+          description: 是否周二運行
+        Wednesday:
+          type: boolean
+          description: 是否周三運行
+        Thursday:
+          type: boolean
+          description: 是否周四運行
+        Friday:
+          type: boolean
+          description: 是否周五運行
+        Saturday:
+          type: boolean
+          description: 是否周六運行
+        Sunday:
+          type: boolean
+          description: 是否周日運行
+        UpdateTime:
+          type: string
+          format: date-time
+          description: 更新時間
+          example: 2024-09-18T10:30:00
+        VersionID:
+          type: integer
+          description: 版本號
+          example: 1
+    FlightResponse:
+      type: object
+      properties:
+        AirlineID:
+          type: string
+          description: 航空公司的代碼
+          example: CI
+        ScheduleStartDate:
+          type: string
+          format: date
+          description: 今天的日期
+          example: 2024-09-18
+        ScheduleEndDate:
+          type: string
+          format: date
+          description: 排程開始日期
+          example: 2024-09-25
+        FlightNumber:
+          type: string
+          description: 航班號碼
+          example: CI123
+        DepartureAirportID:
+          type: string
+          description: 出發機場代碼
+          example: TPE
+        DepartureTime:
+          type: string
+          format: date-time
+          description: 出發時間
+          example: 2024-09-18T10:00:00
+        CodeShare:
+          type: array
+          items:
+            type: string
+          description: 共享代碼
+          example: ["CI123", "BR456"]
+        ArrivalAirportID:
+          type: string
+          description: 到達機場代碼
+          example: JFK
+        ArrivalTime:
+          type: string
+          format: date-time
+          description: 到達時間
+          example: 2024-09-18T15:00:00
+        Monday:
+          type: boolean
+          description: 是否周一運行
+        Tuesday:
+          type: boolean
+          description: 是否周二運行
+        Wednesday:
+          type: boolean
+          description: 是否周三運行
+        Thursday:
+          type: boolean
+          description: 是否周四運行
+        Friday:
+          type: boolean
+          description: 是否周五運行
+        Saturday:
+          type: boolean
+          description: 是否周六運行
+        Sunday:
+          type: boolean
+          description: 是否周日運行
+        UpdateTime:
+          type: string
+          format: date-time
+          description: 更新時間
+          example: 2024-09-18T10:30:00
+        VersionID:
+          type: integer
+          description: 版本號
+          example: 1
+        Terminal:
+          type: string
+          description: 航站樓信息
+          example: Terminal 1
