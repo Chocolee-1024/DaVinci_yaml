@@ -94,7 +94,7 @@ servers:
 #         '404':
 #           description: 找不到航班資料
 
-  /airplane/test:
+/airplane/test:
     post:
       summary: 獲取航班資訊
       operationId: getTestData
@@ -110,15 +110,7 @@ servers:
 
 components:
   schemas:
-    AirportRequest:
-      type: object
-      properties:
-        AirportID:
-          type: string
-          description: 要查詢的機場 ID
-          example: TPE
-
-    AirportResponse:
+    TestResponse:
       type: object
       properties:
         AirportID:
@@ -199,7 +191,6 @@ components:
           type: integer
           description: 資訊的版本 ID
           example: 1484
-
     ErrorResponse:
       type: object
       properties:
@@ -211,119 +202,4 @@ components:
           type: string
           description: 錯誤訊息
           example: 'Invalid AirportID provided'
-
-    AirlineRequest:
-      type: object
-      properties:
-        AirlineID:
-          type: string
-          description: 航空公司的代碼
-          example: CI
-
-    AirlineResponse:
-      type: object
-      properties:
-        AirlineID:
-          type: string
-          description: 航空公司的代碼
-          example: CI
-        AirlineName:
-          type: object
-          properties:
-            Zh_tw:
-              type: string
-              description: 航空公司的中文名稱
-              example: 中華航空
-            En:
-              type: string
-              description: 航空公司的英文名稱
-              example: China Airlines
-        AirlineNameAlias:
-          type: object
-          properties:
-            Zh_tw:
-              type: string
-              description: 航空公司的中文別名
-              example: 華航
-            En:
-              type: string
-              description: 航空公司的英文別名
-              example: CAL
-        AirlineIATA:
-          type: string
-          description: IATA 代碼
-          example: CI
-        AirlineICAO:
-          type: string
-          description: ICAO 代碼
-          example: CAL
-        AirlineEmail:
-          type: string
-          description: 航空公司的電子郵件
-          example: info@china-airlines.com.tw
-        AirlineAddress:
-          type: string
-          description: 航空公司的地址
-          example: 台北市中正區中山南路123號
-        AirlinePhone:
-          type: string
-          description: 航空公司的聯繫電話
-          example: 02-12345678
-        AirlineNationality:
-          type: string
-          description: 航空公司所屬國籍
-          example: TW
-        UpdateTime:
-          type: string
-          format: date-time
-          description: 更新時間
-          example: 2024-09-18T12:34:56+08:00
-        VersionID:
-          type: integer
-          description: 版本 ID
-          example: 1
-
-    FlightRequest:
-      type: object
-      properties:
-        AirlineID:
-          type: string
-          description: 航空公司的代碼
-          example: CI
-        ScheduleStartDate:
-          type: string
-          format: date
-          description: 排程開始日期
-          example: 2024-09-18
-        ScheduleEndDate:
-          type: string
-          format: date
-          description: 排程結束日期
-          example: 2024-09-25
-        FlightNumber:
-          type: string
-          description: 航班號碼
-          example: CI123
-        DepartureAirportID:
-          type: string
-          description: 出發機場代碼
-          example: TPE
-        DepartureTime:
-          type: string
-          format: date-time
-          description: 出發時間
-          example: 2024-09-18T10:00:00
-        CodeShare:
-          type: array
-          items:
-            type: string
-          description: 共享代碼
-          example: ["CI123", "BR456"]
-        ArrivalAirportID:
-          type: string
-          description: 到達機場代碼
-          example: JFK
-        ArrivalTime:
-          type: string
-          format: date-time
          
