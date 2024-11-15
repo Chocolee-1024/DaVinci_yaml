@@ -6,43 +6,107 @@ info:
 servers:
   - url: https://davinci-airplane.nutc-imac.com/api/v1
 
-paths:
-  /airplane/airport:
+# paths:
+#   /airplane/airport:
+#     post:
+#       summary: 查詢有關機場的資訊
+#       operationId: getAirportInfo
+#       requestBody:
+#         description: Airport ID request
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/AirportRequest'
+#       responses:
+#         '200':
+#           description: 成功返回機場資訊
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/AirportResponse'
+#         '400':
+#           description: 無效的請求，請檢查 AirportID 或輸入格式
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/Error'
+#         '404':
+#           description: 找不到機場
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/Error'
+#         '500':
+#           description: 伺服器內部錯誤
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/Error'
+
+#   /airplane/airline:
+#     post:
+#       summary: 查詢有功航空公司的資訊
+#       operationId: getAirlineInfo
+#       requestBody:
+#         description: Airline ID request
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/AirlineRequest'
+#       responses:
+#         '200':
+#           description: 成功返回航空公司資料
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/AirlineResponse'
+#         '401':
+#           description: 未授權
+#         '404':
+#           description: 找不到指定的航空公司
+#         '500':
+#           description: 伺服器錯誤
+
+#   /airplane/flight:
+#     post:
+#       summary: 查詢航班資訊
+#       operationId: getFlightInfo
+#       requestBody:
+#         description: 航班查詢請求
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/FlightRequest'
+#       responses:
+#         '200':
+#           description: 成功返回航班資料
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   $ref: '#/components/schemas/FlightResponse'
+#         '400':
+#           description: 無效的請求
+#         '404':
+#           description: 找不到航班資料
+
+  /airplane/test:
     post:
-      summary: 查詢有關機場的資訊
-      operationId: getAirportInfo
-      requestBody:
-        description: Airport ID request
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AirportRequest'
+      summary: 獲取航班資訊
+      operationId: getTestData
       responses:
         '200':
-          description: 成功返回機場資訊
+          description: 成功返回測試數據
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AirportResponse'
-        '400':
-          description: 無效的請求，請檢查 AirportID 或輸入格式
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '404':
-          description: 找不到機場
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: 伺服器內部錯誤
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TestResponse'
 
 components:
   schemas:
@@ -148,35 +212,6 @@ components:
           description: 錯誤訊息
           example: 'Invalid AirportID provided'
 
-
-paths:
-  /airplane/airline:
-    post:
-      summary: 查詢有功航空公司的資訊
-      operationId: getAirlineInfo
-      requestBody:
-        description: Airline ID request
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AirlineRequest'
-      responses:
-        '200':
-          description: 成功返回航空公司資料
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AirlineResponse'
-        '401':
-          description: 未授權
-        '404':
-          description: 找不到指定的航空公司
-        '500':
-          description: 伺服器錯誤
-
-components:
-  schemas:
     AirlineRequest:
       type: object
       properties:
@@ -247,35 +282,7 @@ components:
           type: integer
           description: 版本 ID
           example: 1
-# 定義 API 路徑
-paths:
-  /airplane/flight:
-    post:
-      summary: 查詢航班資訊
-      operationId: getFlightInfo
-      requestBody:
-        description: 航班查詢請求
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FlightRequest'
-      responses:
-        '200':
-          description: 成功返回航班資料
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FlightResponse'
-        '400':
-          description: 無效的請求
-        '404':
-          description: 找不到航班資料
 
-components:
-  schemas:
     FlightRequest:
       type: object
       properties:
@@ -319,115 +326,4 @@ components:
         ArrivalTime:
           type: string
           format: date-time
-          description: 到達時間
-          example: 2024-09-18T15:00:00
-        Monday:
-          type: boolean
-          description: 是否周一運行
-        Tuesday:
-          type: boolean
-          description: 是否周二運行
-        Wednesday:
-          type: boolean
-          description: 是否周三運行
-        Thursday:
-          type: boolean
-          description: 是否周四運行
-        Friday:
-          type: boolean
-          description: 是否周五運行
-        Saturday:
-          type: boolean
-          description: 是否周六運行
-        Sunday:
-          type: boolean
-          description: 是否周日運行
-        UpdateTime:
-          type: string
-          format: date-time
-          description: 更新時間
-          example: 2024-09-18T10:30:00
-        VersionID:
-          type: integer
-          description: 版本號
-          example: 1
-
-    FlightResponse:
-      type: object
-      properties:
-        AirlineID:
-          type: string
-          description: 航空公司的代碼
-          example: CI
-        ScheduleStartDate:
-          type: string
-          format: date
-          description: 今天的日期
-          example: 2024-09-18
-        ScheduleEndDate:
-          type: string
-          format: date
-          description: 排程開始日期
-          example: 2024-09-25
-        FlightNumber:
-          type: string
-          description: 航班號碼
-          example: CI123
-        DepartureAirportID:
-          type: string
-          description: 出發機場代碼
-          example: TPE
-        DepartureTime:
-          type: string
-          format: date-time
-          description: 出發時間
-          example: 2024-09-18T10:00:00
-        CodeShare:
-          type: array
-          items:
-            type: string
-          description: 共享代碼
-          example: ["CI123", "BR456"]
-        ArrivalAirportID:
-          type: string
-          description: 到達機場代碼
-          example: JFK
-        ArrivalTime:
-          type: string
-          format: date-time
-          description: 到達時間
-          example: 2024-09-18T15:00:00
-        Monday:
-          type: boolean
-          description: 是否周一運行
-        Tuesday:
-          type: boolean
-          description: 是否周二運行
-        Wednesday:
-          type: boolean
-          description: 是否周三運行
-        Thursday:
-          type: boolean
-          description: 是否周四運行
-        Friday:
-          type: boolean
-          description: 是否周五運行
-        Saturday:
-          type: boolean
-          description: 是否周六運行
-        Sunday:
-          type: boolean
-          description: 是否周日運行
-        UpdateTime:
-          type: string
-          format: date-time
-          description: 更新時間
-          example: 2024-09-18T10:30:00
-        VersionID:
-          type: integer
-          description: 版本號
-          example: 1
-        Terminal:
-          type: string
-          description: 航站樓信息
-          example: Terminal 1
+         
